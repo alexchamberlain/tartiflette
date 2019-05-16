@@ -58,22 +58,22 @@ class GraphQLEnumValue:
 
     def bake(self, schema: "GraphQLSchema") -> None:
         self._schema = schema
-        directives_definition = get_directive_instances(
+        self.directives_definition = get_directive_instances(  # pylint: disable=attribute-defined-outside-init
             self._directives, self._schema
         )
         self._directives_implementations = {
             CoercerWay.OUTPUT: wraps_with_directives(
-                directives_definition=directives_definition,
+                directives_definition=self.directives_definition,
                 directive_hook="on_pre_output_coercion",
             ),
             CoercerWay.INPUT: wraps_with_directives(
-                directives_definition=directives_definition,
+                directives_definition=self.directives_definition,
                 directive_hook="on_post_input_coercion",
             ),
         }
 
         self._introspection_directives = wraps_with_directives(
-            directives_definition=directives_definition,
+            directives_definition=self.directives_definition,
             directive_hook="on_introspection",
         )
 
@@ -121,6 +121,26 @@ class GraphQLEnumType(GraphQLType):
     def __eq__(self, other: Any) -> bool:
         return super().__eq__(other) and self.values == other.values
 
+    def get_value(self, name: str) -> str:
+        """
+        Returns the value of the enum value `name`.
+        :param name: the name of the enum value to fetch
+        :type name: str
+        :return: the value of the enum value `name`
+        :rtype: str
+        """
+        return self._value_map[name].value
+
+    def get_enum_value(self, name: str) -> "GraphQLEnumValue":
+        """
+        Returns the GraphQLEnumValue instance of the enum value `name`.
+        :param name: the name of the enum value to fetch
+        :type name: str
+        :return: the GraphQLEnumValue instance of the enum value `name`
+        :rtype: GraphQLEnumValue
+        """
+        return self._value_map[name]
+
     # Introspection Attribute
     @property
     def kind(self) -> str:
@@ -135,22 +155,22 @@ class GraphQLEnumType(GraphQLType):
 
     def bake(self, schema: "GraphQLSchema") -> None:
         super().bake(schema)
-        directives_definition = get_directive_instances(
+        self.directives_definition = get_directive_instances(  # pylint: disable=attribute-defined-outside-init
             self._directives, self._schema
         )
         self._directives_implementations = {
             CoercerWay.OUTPUT: wraps_with_directives(
-                directives_definition=directives_definition,
+                directives_definition=self.directives_definition,
                 directive_hook="on_pre_output_coercion",
             ),
             CoercerWay.INPUT: wraps_with_directives(
-                directives_definition=directives_definition,
+                directives_definition=self.directives_definition,
                 directive_hook="on_post_input_coercion",
             ),
         }
 
         self._introspection_directives = wraps_with_directives(
-            directives_definition=directives_definition,
+            directives_definition=self.directives_definition,
             directive_hook="on_introspection",
         )
 

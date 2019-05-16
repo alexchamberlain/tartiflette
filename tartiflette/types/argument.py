@@ -1,6 +1,7 @@
 from functools import partial
 from typing import Any, Dict, List, Optional, Union
 
+from tartiflette.coercers.literal import get_literal_coercer
 from tartiflette.types.helpers import (
     get_directive_instances,
     wraps_with_directives,
@@ -37,9 +38,11 @@ class GraphQLArgument:
         self._schema = schema
         self._directives = directives
         self.coercer = None
+        self.coercer_func = None
+        self.literal_coercer = None
 
         # Introspection Attribute
-        self._directives_implementations = None
+        self.directives_definition = None
         self._introspection_directives = None
 
     def __repr__(self) -> str:
@@ -71,6 +74,14 @@ class GraphQLArgument:
     def schema(self) -> "GraphQLSchema":
         return self._schema
 
+    @property
+    def graphql_type(self) -> "GraphQLType":
+        return (
+            self.gql_type
+            if isinstance(self.gql_type, GraphQLType)
+            else self.schema.find_type(self.gql_type)
+        )
+
     # Introspection Attribute
     @property
     def type(self) -> dict:
@@ -78,7 +89,7 @@ class GraphQLArgument:
 
     @property
     def directives(self) -> List[Dict[str, Any]]:
-        return self._directives_implementations
+        return self.directives_definition
 
     @property
     def introspection_directives(self):
@@ -96,12 +107,12 @@ class GraphQLArgument:
 
     def bake(self, schema: "GraphQLSchema") -> None:
         self._schema = schema
-        self._directives_implementations = get_directive_instances(
+        self.directives_definition = get_directive_instances(
             self._directives, self._schema
         )
 
         self._introspection_directives = wraps_with_directives(
-            directives_definition=self._directives_implementations,
+            directives_definition=self.directives_definition,
             directive_hook="on_introspection",
         )
 
@@ -123,6 +134,20 @@ class GraphQLArgument:
                 ),
             ),
             self,
+        )
+
+        self.literal_coercer = get_literal_coercer(self.graphql_type)
+
+        from tartiflette.coercers.argument import (
+            argument_coercer as new_argument_coercer,
+        )
+
+        self.coercer_func = partial(
+            new_argument_coercer,
+            directives=wraps_with_directives(
+                directives_definition=self.directives_definition,
+                directive_hook="on_argument_execution",
+            ),
         )
 
     @property

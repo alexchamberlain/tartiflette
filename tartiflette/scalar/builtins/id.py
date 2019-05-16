@@ -4,13 +4,20 @@ from .string import ScalarString
 
 
 class ScalarId(ScalarString):
-    # TODO :-), with @relay I think.
+    # TODO: :-), with @relay I think.
     pass
 
 
-def bake(schema_name, _config):
-    sdl = "scalar ID"
-
-    Scalar(name="ID", schema_name=schema_name)(ScalarId())
-
-    return sdl
+def bake(schema_name, config):
+    """
+    TODO:
+    :param schema_name: TODO:
+    :param config: TODO:
+    :type schema_name: TODO:
+    :type config: TODO:
+    :return: TODO:
+    :rtype: TODO:
+    """
+    # pylint: disable=unused-argument
+    Scalar("ID", schema_name=schema_name)(ScalarId())
+    return "scalar ID"

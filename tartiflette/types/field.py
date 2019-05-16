@@ -16,6 +16,8 @@ class GraphQLField:
     A field is used in Object, Interfaces as its constituents.
     """
 
+    # pylint: disable=too-many-instance-attributes
+
     def __init__(
         self,
         name: str,
@@ -37,6 +39,7 @@ class GraphQLField:
         self.resolver = ResolverExecutorFactory.get_resolver_executor(
             resolver, self
         )
+        self.raw_resolver = resolver
         self.subscribe = None
         self.parent_type = None
 

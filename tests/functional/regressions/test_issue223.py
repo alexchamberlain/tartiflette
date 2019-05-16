@@ -49,7 +49,7 @@ type OKLM @addValue(value: 53) {
 }
 
 type Wahou {
-    wieght: OKLM
+    weight: OKLM
     height: OKLM
 }
 
@@ -201,10 +201,10 @@ async def ttftt_engine():
         ),
         ("query { test4 }", {"data": {"test4": "RED"}}),
         (
-            "query { test5 { wieght { value } height { value } } }",
+            "query { test5 { weight { value } height { value } } }",
             {
                 "data": {
-                    "test5": {"wieght": {"value": 55}, "height": {"value": 59}}
+                    "test5": {"weight": {"value": 55}, "height": {"value": 59}}
                 }
             },
         ),

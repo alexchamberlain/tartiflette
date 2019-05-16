@@ -2,7 +2,6 @@ from typing import Any, Callable, Dict, List, Optional, Union
 
 from tartiflette.types.exceptions.tartiflette import SkipExecution
 from tartiflette.types.helpers import wraps_with_directives
-from tartiflette.utils.arguments import coerce_arguments
 from tartiflette.utils.coercer import get_coercer
 
 
@@ -60,23 +59,57 @@ class _ResolverExecutor:
 
     async def __call__(
         self,
+        execution_context: "ExecutionContext",
         parent_result: Optional[Any],
-        args: Dict[str, Any],
+        # args: Dict[str, Any],
         ctx: Optional[Dict[str, Any]],
         info: "Info",
         execution_directives: Optional[List[Dict[str, Any]]],
+        field_nodes: List["FieldNode"],
     ) -> (Any, Any):
+        # pylint: disable=too-many-locals
+        from tartiflette.execution.values import get_argument_values
+
         try:
+            computed_directives = []
+            try:
+                for directive_node in execution_directives:
+                    directive_name = directive_node.name.value
+                    directive = execution_context.schema.find_directive(
+                        directive_name
+                    )
+
+                    computed_directives.append(
+                        {
+                            "callables": directive.implementation,
+                            "args": await get_argument_values(
+                                directive.arguments,
+                                directive_node,
+                                execution_context.variable_values,
+                            ),
+                        }
+                    )
+            except Exception:  # pylint: disable=broad-except
+                pass
+
             resolver = wraps_with_directives(
-                directives_definition=execution_directives,
+                directives_definition=computed_directives,
                 directive_hook="on_field_execution",
                 func=self._directivated_func,
             )
 
+            from tartiflette.coercers.argument import (
+                coerce_arguments as new_coerce_arguments,
+            )
+
             result = await resolver(
                 parent_result,
-                await coerce_arguments(
-                    self._schema_field.arguments, args, ctx, info
+                await new_coerce_arguments(
+                    self._schema_field.arguments,
+                    field_nodes[0],
+                    execution_context.variable_values,
+                    ctx,
+                    info,
                 ),
                 ctx,
                 info,
@@ -174,12 +207,14 @@ async def default_resolver(
     return None
 
 
-def default_error_coercer(exception: Exception, error: dict) -> dict:
+def default_error_coercer(
+    exception: Exception, error: Dict[str, Any]
+) -> Dict[str, Any]:
     # pylint: disable=unused-argument
     return error
 
 
-def error_coercer_factory(error_coercer: Callable) -> dict:
+def error_coercer_factory(error_coercer: Callable) -> Callable:
     def func_wrapper(exception: Exception) -> dict:
         error = exception.coerce_value()
         return error_coercer(exception, error)

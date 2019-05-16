@@ -35,9 +35,7 @@ class GraphQLInputObjectType(GraphQLType):
         self._directives_implementations = {}
 
     def __repr__(self) -> str:
-        return "{}(name={!r}, fields={!r}, description={!r})".format(
-            self.__class__.__name__, self.name, self._fields, self.description
-        )
+        return "{}(name={!r})".format(self.__class__.__name__, self.name)
 
     def __eq__(self, other: Any) -> bool:
         return super().__eq__(other) and self._fields == other._fields
@@ -60,18 +58,18 @@ class GraphQLInputObjectType(GraphQLType):
 
     def bake(self, schema: "GraphQLSchema") -> None:
         super().bake(schema)
-        directives_definition = get_directive_instances(
+        self.directives_definition = get_directive_instances(  # pylint: disable=attribute-defined-outside-init
             self._directives, self._schema
         )
         self._directives_implementations = {
             CoercerWay.INPUT: wraps_with_directives(
-                directives_definition=directives_definition,
+                directives_definition=self.directives_definition,
                 directive_hook="on_post_input_coercion",
             )
         }
 
         self._introspection_directives = wraps_with_directives(
-            directives_definition=directives_definition,
+            directives_definition=self.directives_definition,
             directive_hook="on_introspection",
         )
 

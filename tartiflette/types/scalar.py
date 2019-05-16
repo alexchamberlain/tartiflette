@@ -29,6 +29,7 @@ class GraphQLScalarType(GraphQLType):
         super().__init__(name=name, description=description, schema=schema)
         self.coerce_output = None
         self.coerce_input = None
+        self.parse_literal = None
         self._directives = directives
         self._directives_implementations = {}
 
@@ -43,6 +44,7 @@ class GraphQLScalarType(GraphQLType):
             super().__eq__(other)
             and self.coerce_output == other.coerce_output
             and self.coerce_input == other.coerce_input
+            and self.parse_literal == other.parse_literal
         )
 
     # Introspection Attribute
@@ -52,22 +54,22 @@ class GraphQLScalarType(GraphQLType):
 
     def bake(self, schema):
         super().bake(schema)
-        directives_definition = get_directive_instances(
+        self.directives_definition = get_directive_instances(  # pylint: disable=attribute-defined-outside-init
             self._directives, self._schema
         )
         self._directives_implementations = {
             CoercerWay.OUTPUT: wraps_with_directives(
-                directives_definition=directives_definition,
+                directives_definition=self.directives_definition,
                 directive_hook="on_pre_output_coercion",
             ),
             CoercerWay.INPUT: wraps_with_directives(
-                directives_definition=directives_definition,
+                directives_definition=self.directives_definition,
                 directive_hook="on_post_input_coercion",
             ),
         }
 
         self._introspection_directives = wraps_with_directives(
-            directives_definition=directives_definition,
+            directives_definition=self.directives_definition,
             directive_hook="on_introspection",
         )
 

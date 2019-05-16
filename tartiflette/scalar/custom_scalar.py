@@ -51,6 +51,7 @@ class Scalar:
 
         scalar.coerce_output = self._implementation.coerce_output
         scalar.coerce_input = self._implementation.coerce_input
+        scalar.parse_literal = self._implementation.parse_literal
 
     def __call__(self, implementation):
         if isclass(implementation):
