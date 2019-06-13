@@ -47,7 +47,7 @@ async def test_tartiflette_execute_enum_type_output(clean_registry):
                 "data": None,
                 "errors": [
                     {
-                        "message": "Invalid value (value: None) for field `testField` of type `Test!`",
+                        "message": "Cannot return null for non-nullable field Query.testField.",
                         "path": ["testField"],
                         "locations": [{"line": 3, "column": 9}],
                     }
@@ -63,11 +63,41 @@ async def test_tartiflette_execute_enum_type_output(clean_registry):
             "[Test]",
             ["Value3", "UnknownValue"],
             {
+                "data": {
+                    "testField": ["Value3", None]
+                },  # TODO: should check this, I'm not sure that the expected behavior
+                "errors": [
+                    {
+                        "message": "Expected value of type Test but received <class 'str'>.",
+                        "path": ["testField", 1],
+                        "locations": [{"line": 3, "column": 9}],
+                    }
+                ],
+            },
+        ),
+        (
+            "[Test!]",
+            ["Value3", "UnknownValue"],
+            {
                 "data": {"testField": None},
                 "errors": [
                     {
-                        "message": "Invalid value (value: 'UnknownValue') for field `testField` of type `[Test]`",
-                        "path": ["testField"],
+                        "message": "Expected value of type Test but received <class 'str'>.",
+                        "path": ["testField", 1],
+                        "locations": [{"line": 3, "column": 9}],
+                    }
+                ],
+            },
+        ),
+        (
+            "[Test!]!",
+            ["Value3", "UnknownValue"],
+            {
+                "data": None,
+                "errors": [
+                    {
+                        "message": "Expected value of type Test but received <class 'str'>.",
+                        "path": ["testField", 1],
                         "locations": [{"line": 3, "column": 9}],
                     }
                 ],

@@ -45,6 +45,9 @@ _EXPECTED_DIRECTIVE_IMPLEM = [
     "on_post_input_coercion",
     "on_argument_execution",
     "on_field_execution",
+    "on_field_collection",
+    "on_fragment_spread_collection",
+    "on_inline_fragment_collection",
 ]
 
 

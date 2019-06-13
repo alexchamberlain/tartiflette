@@ -10,7 +10,7 @@ GQLTypeMock = namedtuple("GQLTypeMock", ["name", "coerce_value"])
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
-    "query, expected, typee, varis",
+    "query,expected,typee,varis",
     [
         (
             """
@@ -71,7 +71,7 @@ async def test_issue21_okayquery(
 
     @Resolver("Query.a")
     async def a_resolver(_, arguments, __, info: Info):
-        return {"iam": info.query_field.name, "args": arguments}
+        return {"iam": info.field_name, "args": arguments}
 
     ttftt = await create_engine(
         """
@@ -91,16 +91,17 @@ async def test_issue21_okayquery(
         % (typee, typee)
     )
 
-    results = await ttftt.execute(
-        query, context={}, variables=varis, operation_name="LOL"
+    assert (
+        await ttftt.execute(
+            query, context={}, variables=varis, operation_name="LOL"
+        )
+        == expected
     )
-
-    assert results == expected
 
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
-    "query, expected, varis",
+    "query,expected,varis",
     [
         (
             """
@@ -112,15 +113,10 @@ async def test_issue21_okayquery(
                 "data": None,
                 "errors": [
                     {
-                        "message": "< xid > is not known",
-                        "locations": [],
+                        "message": "Variable < $xid > of required type < Int! > was not provided.",
                         "path": None,
-                    },
-                    {
-                        "message": "< xid > is not known",
-                        "locations": [],
-                        "path": None,
-                    },
+                        "locations": [{"line": 2, "column": 23}],
+                    }
                 ],
             },
             {},
@@ -135,9 +131,9 @@ async def test_issue21_okayquery(
                 "data": None,
                 "errors": [
                     {
-                        "message": "Given value for < xid > is not type < <class 'int'> >",
-                        "locations": [{"column": 23, "line": 2}],
+                        "message": "Variable < $xid > got invalid value < RE >; Expected type < Int >; Int cannot represent non-integer value: < RE >",
                         "path": None,
+                        "locations": [{"line": 2, "column": 23}],
                     }
                 ],
             },
@@ -153,9 +149,9 @@ async def test_issue21_okayquery(
                 "data": None,
                 "errors": [
                     {
-                        "message": "Expecting List for < xid > values",
-                        "locations": [{"column": 23, "line": 2}],
+                        "message": "Variable < $xid > got invalid value < RE >; Expected type < Int >; Int cannot represent non-integer value: < RE >",
                         "path": None,
+                        "locations": [{"line": 2, "column": 23}],
                     }
                 ],
             },
@@ -171,9 +167,9 @@ async def test_issue21_okayquery(
                 "data": None,
                 "errors": [
                     {
-                        "message": "Given value for < xid > is not type < <class 'int'> >",
-                        "locations": [{"column": 23, "line": 2}],
+                        "message": "Variable < $xid > got invalid value < ['RE'] >; Expected type < Int > at value[0]; Int cannot represent non-integer value: < RE >",
                         "path": None,
+                        "locations": [{"line": 2, "column": 23}],
                     }
                 ],
             },
@@ -186,7 +182,7 @@ async def test_issue21_exceptquery(query, expected, varis, clean_registry):
 
     @Resolver("Query.a")
     async def a_resolver(_, arguments, __, info: Info):
-        return {"iam": info.query_field.name, "args": arguments}
+        return {"iam": info.field_name, "args": arguments}
 
     ttftt = await create_engine(
         """

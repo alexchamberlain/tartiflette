@@ -1,5 +1,5 @@
 from functools import partial
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Union
 
 
 async def _default_argument_execution_directive(
@@ -37,6 +37,36 @@ _DEFAULT_HOOKS_CALLABLE = {
 }
 
 
+async def directive_executor(
+    directive_func: Callable,
+    directive_args: Union[Dict[str, Any], Callable],
+    wrapped_func: Callable,
+    *args,
+    **kwargs,
+) -> Any:
+    """
+    TODO:
+    :param directive_func: TODO:
+    :param directive_args: TODO:
+    :param wrapped_func: TODO:
+    :param args: TODO:
+    :param kwargs: TODO:
+    :type directive_func: TODO:
+    :type directive_args: TODO:
+    :type wrapped_func: TODO:
+    :type args: TODO:
+    :type kwargs: TODO:
+    :return: TODO:
+    :rtype: TODO:
+    """
+    return await directive_func(
+        await directive_args() if callable(directive_args) else directive_args,
+        wrapped_func,
+        *args,
+        **kwargs,
+    )
+
+
 def wraps_with_directives(
     directives_definition: List[Dict[str, Any]],
     directive_hook: str,
@@ -61,6 +91,9 @@ def wraps_with_directives(
     for directive in reversed(directives_definition):
         if directive_hook in directive["callables"]:
             func = partial(
-                directive["callables"][directive_hook], directive["args"], func
+                directive_executor,
+                directive["callables"][directive_hook],
+                directive["args"],
+                func,
             )
     return func

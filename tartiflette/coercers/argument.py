@@ -6,7 +6,7 @@ from tartiflette.constants import UNDEFINED_VALUE
 from tartiflette.language.ast import NullValueNode, VariableNode
 from tartiflette.types.exceptions.tartiflette import MultipleException
 from tartiflette.types.helpers.definition import is_non_null_type
-from tartiflette.utils.errors import graphql_error_from_nodes, to_graphql_error
+from tartiflette.utils.errors import graphql_error_from_nodes, located_error
 from tartiflette.utils.values import is_invalid_value
 
 
@@ -154,13 +154,20 @@ async def coerce_arguments(
     coerced_values: Dict[str, Any] = {}
 
     for argument_name, result in zip(argument_definitions, results):
-        if isinstance(result, MultipleException):
-            coercion_errors.extend(result.exceptions)
-            continue
-
         if isinstance(result, Exception):
-            coercion_errors.append(to_graphql_error(result))
-            continue
+            coercion_errors.extend(
+                located_error(
+                    result, nodes=[argument_nodes_map.get(argument_name)]
+                ).exceptions
+            )
+
+        # if isinstance(result, MultipleException):
+        #     coercion_errors.extend(result.exceptions)
+        #     continue
+        #
+        # if isinstance(result, Exception):
+        #     coercion_errors.append(to_graphql_error(result))
+        #     continue
 
         if result is not UNDEFINED_VALUE:
             coerced_values[argument_name] = result

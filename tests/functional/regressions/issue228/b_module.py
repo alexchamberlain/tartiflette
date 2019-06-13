@@ -30,6 +30,10 @@ class NinjaGo:
     def coerce_input(val):
         return val
 
+    @staticmethod
+    def parse_literal(ast):
+        return ast.value
+
 
 async def resolver_of_lol_ninja(pr, *_args, **_kwargs):
     return pr["ninja"] + " NinjaB"

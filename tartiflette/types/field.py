@@ -86,6 +86,12 @@ class GraphQLField:
             and self.directives == other.directives
         )
 
+    @property
+    def graphql_type(self) -> Union[str, GraphQLType]:
+        if isinstance(self.gql_type, GraphQLType):
+            return self.gql_type
+        return self.schema.find_type(self.gql_type)
+
     # Introspection Attribute
     @property
     def kind(self) -> str:

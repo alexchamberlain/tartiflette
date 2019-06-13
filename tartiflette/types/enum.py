@@ -1,5 +1,6 @@
 from typing import Any, Dict, List, Optional, Union
 
+from tartiflette.constants import UNDEFINED_VALUE
 from tartiflette.types.helpers import (
     get_directive_instances,
     wraps_with_directives,
@@ -120,6 +121,11 @@ class GraphQLEnumType(GraphQLType):
 
     def __eq__(self, other: Any) -> bool:
         return super().__eq__(other) and self.values == other.values
+
+    def coerce_output(self, val: Any) -> str:
+        if val in self._value_map:
+            return self._value_map[val].value
+        return UNDEFINED_VALUE
 
     def get_value(self, name: str) -> str:
         """

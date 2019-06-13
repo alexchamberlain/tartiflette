@@ -60,10 +60,10 @@ async def __typename_resolver(
     info: "Info",
 ) -> "GraphQLType":
     try:
-        return info.schema_field.schema.find_type(get_typename(parent_result))
+        return info.schema.find_type(get_typename(parent_result))
     except (AttributeError, KeyError):
         pass
-    return info.schema_field.parent_type
+    return info.parent_type
 
 
 TYPENAME_ROOT_FIELD_DEFINITION = partial(

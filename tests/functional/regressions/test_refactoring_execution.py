@@ -110,13 +110,13 @@ _EXPECTED = {
                }
             }
 
-            fragment LightDogFields on Dog @myDirective0 {
+            fragment LightDogFields on Dog {
               name
               barkVolume
             }
 
-            fragment DogFields on Dog @myDirective8 {
-              name @myDirective9
+            fragment DogFields on Dog {
+              name
               doesKnowCommand(dogCommand: DOWN)
               isHousetrained(atOtherHomes: true)
               owner {
@@ -134,17 +134,17 @@ _EXPECTED = {
               name
             }
 
-            fragment QueryDogFields on Query @myDirective3 {
-              ... on Query @myDirective4 {
-                ... @myDirective5_1 {
-                  dog @myDirective5 {
-                    ... on Dog @myDirective6 {
-                      ...DogFields @myDirective7
+            fragment QueryDogFields on Query {
+              ... on Query {
+                ... {
+                  dog {
+                    ... on Dog {
+                      ...DogFields
                     }
                   }
                   dog {
                     name
-                    nickname @myDirective10
+                    nickname
                     barkVolume
                   }
                   dog {
@@ -155,8 +155,8 @@ _EXPECTED = {
             }
 
             query Dog {
-              ... on Query @myDirective1 {
-                ...QueryDogFields @myDirective2
+              ... on Query {
+                ...QueryDogFields
               }
             }
 
@@ -169,24 +169,18 @@ _EXPECTED = {
             None,
             {
                 "data": {
-                    "pets": [
-                        {
-                            "barkVolume": 10,
-                            "doesKnowCommand": True,
-                            "friends": [
-                                {"id": 1, "name": "Dog+Dog.name"},
-                                {"id": 2, "name": "Cat+Cat.name"},
-                            ],
-                            "id": 1,
-                            "name": "Dog+Dog.name",
-                            "nickname": "Doggo+Dog.nickname",
-                            "owner": {
-                                "__typename": "Human",
-                                "id": 1,
-                                "name": "Hooman+Human.name",
-                            },
-                        }
-                    ]
+                    "dog": {
+                        "name": "Dog",
+                        "doesKnowCommand": True,
+                        "isHousetrained": False,
+                        "owner": {"name": "Hooman"},
+                        "friends": [
+                            {"name": "Dog", "nickname": "Doggo"},
+                            {"name": "Cat", "nickname": "Catto"},
+                        ],
+                        "nickname": "Doggo",
+                        "barkVolume": 2,
+                    }
                 }
             },
         ),

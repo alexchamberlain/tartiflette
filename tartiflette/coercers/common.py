@@ -45,6 +45,19 @@ class Path:
             current_path = current_path.prev
         return f"value{path_str}" if path_str else ""
 
+    def as_list(self) -> List[str]:
+        """
+        TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
+        path = []
+        current_path = self
+        while current_path:
+            path.append(current_path.key)
+            current_path = current_path.prev
+        return path[::-1]
+
 
 class CoercionResult:
     """
@@ -117,6 +130,5 @@ def coercion_error(
         + (" at " + str(path) if path else "")
         + ("; " + sub_message if sub_message else "."),
         locations=[node.location] if node else None,
-        path=None,
         original_error=original_error,
     )

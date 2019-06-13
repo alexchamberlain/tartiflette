@@ -3,7 +3,6 @@ import json
 import pytest
 
 from tartiflette import Directive, Resolver, Scalar, create_engine
-from tartiflette.scalar.builtins.string import ScalarString
 
 _SDL = """
 
@@ -68,7 +67,7 @@ type Query {
 async def ttftt_engine():
     @Resolver("Query.test5", schema_name="issue223")
     async def resolver_test5(_pr, _args, _ctx, _info):
-        return {"wieght": {"value": 2}, "height": {"value": 6}}
+        return {"weight": {"value": 2}, "height": {"value": 6}}
 
     @Directive("addValue", schema_name="issue223")
     class AddValue:
@@ -132,6 +131,10 @@ async def ttftt_engine():
         @staticmethod
         def coerce_input(val):
             return str(val)
+
+        @staticmethod
+        def parse_literal(ast):
+            return ast.value
 
     @Directive("capitalized", schema_name="issue223")
     class Capitalized:

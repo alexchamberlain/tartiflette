@@ -77,7 +77,7 @@ async def ttftt_engine():
                     {
                         "message": "Limit reached",
                         "path": ["aList"],
-                        "locations": [{"line": 3, "column": 15}],
+                        "locations": [{"line": 3, "column": 21}],
                         "type": "bad_request",
                     }
                 ],
@@ -85,5 +85,5 @@ async def ttftt_engine():
         )
     ],
 )
-async def test_issue209(query, expected, ttftt_engine):
+async def test_issue209(ttftt_engine, query, expected):
     assert await ttftt_engine.execute(query) == expected

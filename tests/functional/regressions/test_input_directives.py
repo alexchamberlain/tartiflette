@@ -1,6 +1,8 @@
 import pytest
 
 from tartiflette import Directive, Resolver, Scalar, create_engine
+from tartiflette.constants import UNDEFINED_VALUE
+from tartiflette.language.ast import StringValueNode
 from tartiflette.scalar.builtins.string import ScalarString
 
 _SDL = """
@@ -73,8 +75,8 @@ async def ttftt_engine():
 
     @Directive("debug", schema_name="test_input_directives")
     class DebugDirective:
+        @staticmethod
         async def on_argument_execution(
-            self,
             directive_args,
             next_directive,
             argument_definition,
@@ -83,9 +85,8 @@ async def ttftt_engine():
             info,
         ):
             result = await next_directive(argument_definition, args, ctx, info)
-            print(
-                "-> on_argument_execution", directive_args.get("message"), args
-            )
+            # print("-> on_argument_execution", directive_args.get(
+            # "message"), args)
             return result
 
         @staticmethod
@@ -100,7 +101,7 @@ async def ttftt_engine():
             result = await next_directive(
                 value, argument_definition, ctx, info
             )
-            print("-> on_post_input_coercion", directive_args.get("message"))
+            # print("-> on_post_input_coercion", directive_args.get("message"))
             return result
 
         @staticmethod
@@ -108,13 +109,13 @@ async def ttftt_engine():
             directive_args, next_directive, value, field_definition, ctx, info
         ):
             result = await next_directive(value, field_definition, ctx, info)
-            print("-> on_pre_output_coercion", directive_args.get("message"))
+            # print("-> on_pre_output_coercion", directive_args.get("message"))
             return result
 
     @Directive("error", schema_name="test_input_directives")
     class ErrorDirective:
+        @staticmethod
         async def on_argument_execution(
-            self,
             directive_args,
             next_directive,
             argument_definition,
@@ -122,7 +123,7 @@ async def ttftt_engine():
             ctx,
             info,
         ):
-            print("-> on_argument_execution error")
+            # print("-> on_argument_execution error")
             raise ValueError("on_argument_execution error")
 
         @staticmethod
@@ -134,19 +135,37 @@ async def ttftt_engine():
             ctx,
             info: "Info",
         ):
-            print("-> on_post_input_coercion error")
+            # print("-> on_post_input_coercion error")
             raise ValueError("on_post_input_coercion error")
 
         @staticmethod
         async def on_pre_output_coercion(
             directive_args, next_directive, value, field_definition, ctx, info
         ):
-            print("-> on_pre_output_coercion")
+            # print("-> on_pre_output_coercion")
             raise ValueError("on_pre_output_coercion error error")
 
     @Scalar("CustomString", schema_name="test_input_directives")
-    class CustomScalar(ScalarString):
-        pass
+    class CustomScalar:
+        @staticmethod
+        def coerce_output(value):
+            return str(value)
+
+        @staticmethod
+        def coerce_input(value):
+            if not isinstance(value, str):
+                raise TypeError(
+                    f"String cannot represent a non string value: < {value} >"
+                )
+            return value
+
+        @staticmethod
+        def parse_literal(ast):
+            return (
+                ast.value
+                if isinstance(ast, StringValueNode)
+                else UNDEFINED_VALUE
+            )
 
     return await create_engine(_SDL, schema_name="test_input_directives")
 
@@ -260,12 +279,22 @@ async def ttftt_engine():
                 "data": {"users": None},
                 "errors": [
                     {
-                        "locations": [{"column": 15, "line": 3}],
                         "message": "Argument < input > has invalid value < {filters: {groups: [Group 1, null, Group 2, null], fields: [FIELD_1, null, FIELD_2, null, UNKNOWN_FIELD]}} >.",
                         "path": ["users"],
+                        "locations": [{"line": 3, "column": 28}],
                     }
                 ],
             },
+            # {
+            #     'data': {'users': None},
+            #     'errors': [
+            #         {
+            #             'message': 'Argument < input > has invalid value < {filters: {groups: [Group 1, null, Group 2, null], fields: [FIELD_1, null, FIELD_2, null, UNKNOWN_FIELD]}} >.',
+            #             'path': ['users'],
+            #             'locations': [{'line': 3, 'column': 15}]
+            #         }
+            #     ]
+            # }
         ),
         (
             """

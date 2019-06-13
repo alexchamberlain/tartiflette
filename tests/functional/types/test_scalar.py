@@ -45,7 +45,7 @@ async def test_tartiflette_execute_scalar_type_output(clean_registry):
                 "data": None,
                 "errors": [
                     {
-                        "message": "Invalid value (value: None) for field `testField` of type `String!`",
+                        "message": "Cannot return null for non-nullable field Query.testField.",
                         "path": ["testField"],
                         "locations": [{"line": 3, "column": 9}],
                     }
@@ -132,8 +132,8 @@ async def test_tartiflette_execute_scalar_type_output(clean_registry):
                 "data": {"testField": None},
                 "errors": [
                     {
-                        "message": "Invalid value (value: None) for field `testField` of type `[DateTime!]`",
-                        "path": ["testField"],
+                        "message": "Cannot return null for non-nullable field Query.testField.",
+                        "path": ["testField", 1],
                         "locations": [{"line": 3, "column": 9}],
                     }
                 ],
@@ -204,6 +204,10 @@ async def test_tartiflette_declare_custom_scalar(clean_registry):
         @staticmethod
         def coerce_input(val):
             return val
+
+        @staticmethod
+        def parse_literal(ast: "Node") -> str:
+            return ast.value
 
     ttftt = await create_engine(sdl)
 

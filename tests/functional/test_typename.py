@@ -33,7 +33,12 @@ async def ttftt_engine():
     async def func_field_resolver(parent, arguments, request_ctx, info: Info):
         chosen = arguments.get("choose", 0)
         if chosen == 1:
-            return {"aField": "aValue", "bField": 1, "_typename": "One"}
+            return {
+                "aField": "aValue",
+                "bField": 1,
+                "_typename": "One",
+                "__typename": "One",
+            }
         elif chosen == 2:
 
             class Lol:

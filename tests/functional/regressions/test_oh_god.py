@@ -199,8 +199,8 @@ async def ttftt_engine():
 
     @Directive("validateMaxLength", schema_name="test_oh_god")
     class ValidateMaxLengthDirective:
+        @staticmethod
         async def on_field_execution(
-            self,
             directive_args: Dict[str, Any],
             next_resolver: Callable,
             parent_result: Optional[Any],
@@ -215,8 +215,8 @@ async def ttftt_engine():
                 )
             return result
 
+        @staticmethod
         async def on_argument_execution(
-            self,
             directive_args: Dict[str, Any],
             next_directive: Callable,
             argument_definition: "GraphQLArgument",
@@ -233,8 +233,8 @@ async def ttftt_engine():
 
     @Directive("concatenate", schema_name="test_oh_god")
     class ConcatenateDirective:
+        @staticmethod
         async def on_field_execution(
-            self,
             directive_args: Dict[str, Any],
             next_resolver: Callable,
             parent_result: Optional[Any],
@@ -249,8 +249,8 @@ async def ttftt_engine():
                 else result
             )
 
+        @staticmethod
         async def on_argument_execution(
-            self,
             directive_args: Dict[str, Any],
             next_directive: Callable,
             argument_definition: "GraphQLArgument",
@@ -414,18 +414,13 @@ async def ttftt_engine():
             """,
             None,
             {
-                "data": None,
+                "data": {"pets": None},
                 "errors": [
                     {
-                        "locations": [],
                         "message": "Value of argument < with > is too long.",
-                        "path": None,
-                    },
-                    {
-                        "locations": [],
-                        "message": "Value of argument < with > is too long.",
-                        "path": None,
-                    },
+                        "path": ["pets", 0, "name"],  # TODO: weird isn't?
+                        "locations": [{"line": 10, "column": 37}],
+                    }
                 ],
             },
         ),

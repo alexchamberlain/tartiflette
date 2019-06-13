@@ -43,7 +43,7 @@ class GraphQLUnionType(GraphQLType):
     def __eq__(self, other: Any) -> bool:
         return super().__eq__(other) and self.gql_types == other.gql_types
 
-    def is_possible_types(self, gql_type: "GraphQLType") -> bool:
+    def is_possible_type(self, gql_type: "GraphQLType") -> bool:
         """
         Determines if a GraphQLType is a possible types for the union.
         :param gql_type: the GraphQLType to check

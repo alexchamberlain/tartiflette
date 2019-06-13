@@ -190,13 +190,13 @@ _EXPECTED = {
                }
             }
 
-            fragment LightDogFields on Dog @myDirective0 {
+            fragment LightDogFields on Dog {
               name
               barkVolume
             }
 
-            fragment DogFields on Dog @myDirective8 {
-              name @myDirective9
+            fragment DogFields on Dog {
+              name
               doesKnowCommand(dogCommand: DOWN)
               isHousetrained(atOtherHomes: true)
               owner {
@@ -214,17 +214,17 @@ _EXPECTED = {
               name
             }
 
-            fragment QueryDogFields on Query @myDirective3 {
-              ... on Query @myDirective4 {
-                ... @myDirective5_1 {
-                  dog @myDirective5 {
-                    ... on Dog @myDirective6 {
-                      ...DogFields @myDirective7
+            fragment QueryDogFields on Query {
+              ... on Query {
+                ... {
+                  dog {
+                    ... on Dog {
+                      ...DogFields
                     }
                   }
                   dog {
                     name
-                    nickname @myDirective10
+                    nickname
                     barkVolume
                   }
                   dog {
@@ -235,8 +235,8 @@ _EXPECTED = {
             }
 
             query Dog {
-              ... on Query @myDirective1 {
-                ...QueryDogFields @myDirective2
+              ... on Query {
+                ...QueryDogFields
               }
             }
 
@@ -293,9 +293,9 @@ _EXPECTED = {
               }
             }
 
-            fragment DogFields on Dog @myDirective8 {
-              name @myDirective9
-              nickname @myDirective10
+            fragment DogFields on Dog {
+              name
+              nickname
               barkVolume
               doesKnowCommand(dogCommand: $dogCommand)
               isHousetrained(atOtherHomes: $atOtherHomes)
@@ -310,19 +310,19 @@ _EXPECTED = {
               name
             }
 
-            fragment QueryDogFields on Query @myDirective3 {
-              ... on Query @myDirective4 {
-                dog @myDirective5 {
-                  ... on Dog @myDirective6 {
-                    ...DogFields @myDirective7
+            fragment QueryDogFields on Query {
+              ... on Query {
+                dog {
+                  ... on Dog {
+                    ...DogFields
                   }
                 }
               }
             }
 
             query Dog($dogCommand: DogCommand!, $atOtherHomes: Boolean) {
-              ... on Query @myDirective1 {
-                ...QueryDogFields @myDirective2
+              ... on Query {
+                ...QueryDogFields
               }
             }
 
@@ -344,9 +344,9 @@ _EXPECTED = {
               }
             }
 
-            fragment DogFields on Dog @myDirective8 {
-              name @myDirective9
-              nickname @myDirective10
+            fragment DogFields on Dog {
+              name
+              nickname
               barkVolume
               doesKnowCommand(dogCommand: $dogCommand)
               isHousetrained(atOtherHomes: $atOtherHomes)
@@ -361,19 +361,19 @@ _EXPECTED = {
               name
             }
 
-            fragment QueryDogFields on Query @myDirective3 {
-              ... on Query @myDirective4 {
-                dog @myDirective5 {
-                  ... on Dog @myDirective6 {
-                    ...DogFields @myDirective7
+            fragment QueryDogFields on Query {
+              ... on Query {
+                dog {
+                  ... on Dog {
+                    ...DogFields
                   }
                 }
               }
             }
 
             query Dog($dogCommand: DogCommand! = DOWN, $atOtherHomes: Boolean = true) {
-              ... on Query @myDirective1 {
-                ...QueryDogFields @myDirective2
+              ... on Query {
+                ...QueryDogFields
               }
             }
 

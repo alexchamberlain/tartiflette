@@ -5,27 +5,22 @@ from tartiflette.scalar.builtins.int import ScalarInt
 from tartiflette.scalar.builtins.string import ScalarString
 
 
-@Scalar("Boolean", schema_name="coercion")
 class BooleanScalar(ScalarBoolean):
     pass
 
 
-@Scalar("Float", schema_name="coercion")
 class FloatScalar(ScalarFloat):
     pass
 
 
-@Scalar("Int", schema_name="coercion")
 class IntScalar(ScalarInt):
     pass
 
 
-@Scalar("String", schema_name="coercion")
 class StringScalar(ScalarString):
     pass
 
 
-@Directive("debug", schema_name="coercion")
 class DebugDirective:
     async def on_argument_execution(
         self,
@@ -54,7 +49,6 @@ class DebugDirective:
         return result
 
 
-@Directive("lowercase", schema_name="coercion")
 class LowercaseDirective:
     async def on_argument_execution(
         self,
@@ -95,7 +89,6 @@ class LowercaseDirective:
         return result
 
 
-@Directive("increment", schema_name="coercion")
 class IncrementDirective:
     async def on_argument_execution(
         self,
@@ -140,7 +133,6 @@ class IncrementDirective:
         return result
 
 
-@Directive("concatenate", schema_name="coercion")
 class ConcatenateDirective:
     async def on_argument_execution(
         self,
@@ -175,7 +167,6 @@ class ConcatenateDirective:
         )
 
 
-@Directive("mapToValue", schema_name="coercion")
 class MapToValueDirective:
     async def on_argument_execution(
         self,
@@ -245,3 +236,16 @@ async def resolve_input_object_field(parent, args, ctx, info):
                 )
             )
     return "SUCCESS"
+
+
+def bake(schema_name, config):
+    Scalar("Boolean", schema_name="coercion")(BooleanScalar())
+    Scalar("Float", schema_name="coercion")(FloatScalar())
+    Scalar("Int", schema_name="coercion")(IntScalar())
+    Scalar("String", schema_name="coercion")(StringScalar())
+    Directive("debug", schema_name="coercion")(DebugDirective())
+    Directive("lowercase", schema_name="coercion")(LowercaseDirective())
+    Directive("increment", schema_name="coercion")(IncrementDirective())
+    Directive("concatenate", schema_name="coercion")(ConcatenateDirective())
+    Directive("mapToValue", schema_name="coercion")(MapToValueDirective())
+    return ""

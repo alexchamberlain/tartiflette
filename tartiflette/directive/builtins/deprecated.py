@@ -4,6 +4,10 @@ from tartiflette import Directive
 
 
 class Deprecated:
+    """
+    TODO:
+    """
+
     async def on_introspection(
         self,
         directive_args: Dict[str, Any],
@@ -12,7 +16,22 @@ class Deprecated:
         ctx: Optional[Dict[str, Any]],
         info: "Info",
     ):
-
+        """
+        TODO:
+        :param directive_args: TODO:
+        :param next_directive: TODO:
+        :param introspected_element: TODO:
+        :param ctx: TODO:
+        :param info: TODO:
+        :type directive_args: TODO:
+        :type next_directive: TODO:
+        :type introspected_element: TODO:
+        :type ctx: TODO:
+        :type info: TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
+        # pylint: disable=no-self-use
         introspected_element = await next_directive(
             introspected_element, ctx, info
         )
@@ -25,13 +44,20 @@ class Deprecated:
         return introspected_element
 
 
-def bake(schema_name, _config):
-    sdl = """
+def bake(schema_name, config):
+    """
+    TODO:
+    :param schema_name: TODO:
+    :param config: TODO:
+    :type schema_name: TODO:
+    :type config: TODO:
+    :return: TODO:
+    :rtype: TODO:
+    """
+    # pylint: disable=unused-argument
+    Directive("deprecated", schema_name=schema_name)(Deprecated())
+    return """
     directive @deprecated(
         reason: String = "Deprecated"
     ) on FIELD_DEFINITION | ENUM_VALUE
     """
-
-    Directive("deprecated", schema_name=schema_name)(Deprecated())
-
-    return sdl

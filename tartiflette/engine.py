@@ -102,6 +102,7 @@ class Engine:
         self._parser = TartifletteRequestParser()
         self._schema = None
         self._build_response = None
+        self._custom_default_resolver = None
 
         if (
             sdl
@@ -178,6 +179,7 @@ class Engine:
                 error_coercer or default_error_coercer
             ),
         )
+        self._custom_default_resolver = custom_default_resolver
 
     async def execute(
         self,
@@ -216,6 +218,7 @@ class Engine:
             variables,
             operation_name,
             self._build_response,
+            self._custom_default_resolver,
         )
 
         return (
