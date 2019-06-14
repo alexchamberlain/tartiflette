@@ -16,7 +16,7 @@ async def argument_coercer(
     argument_node: Optional["ArgumentNode"],
     variable_values: Dict[str, Any],
     ctx: Optional[Any],
-    info: Optional["Info"],
+    info: Optional["ResolveInfo"],
     directives: Callable,
 ) -> Any:
     """
@@ -108,7 +108,7 @@ async def coerce_arguments(
     node: Union["FieldNode", "DirectiveNode"],
     variable_values: Dict[str, Any],
     ctx: Optional[Any],
-    info: Optional["Info"],
+    info: Optional["ResolveInfo"],
 ) -> Dict[str, Any]:
     """
     Returns the computed values of the arguments.
@@ -137,7 +137,7 @@ async def coerce_arguments(
 
     results = await asyncio.gather(
         *[
-            argument_definition.coercer_func(
+            argument_definition.coercer(
                 argument_definition,
                 node,
                 argument_nodes_map.get(argument_definition.name),
@@ -161,6 +161,7 @@ async def coerce_arguments(
                 ).exceptions
             )
 
+        # TODO: should we remove this dead code?
         # if isinstance(result, MultipleException):
         #     coercion_errors.extend(result.exceptions)
         #     continue

@@ -8,8 +8,19 @@ _SCHEMA_OBJECT_IDS = ["directives", "resolvers", "scalars", "subscriptions"]
 
 
 class SchemaBakery:
+    """
+    TODO:
+    """
+
     @staticmethod
     def _preheat(schema_name: str) -> GraphQLSchema:
+        """
+        TODO:
+        :param schema_name: TODO:
+        :type schema_name: TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         schema_info = SchemaRegistry.find_schema_info(schema_name)
         schema = schema_info.get("inst", GraphQLSchema(name=schema_name))
 
@@ -28,6 +39,15 @@ class SchemaBakery:
     def bake(
         schema_name: str, custom_default_resolver: Optional[Callable] = None
     ) -> GraphQLSchema:
+        """
+        TODO:
+        :param schema_name: TODO:
+        :param custom_default_resolver: TODO:
+        :type schema_name: TODO:
+        :type custom_default_resolver: TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         schema = SchemaBakery._preheat(schema_name)
         schema.bake(custom_default_resolver)
         return schema

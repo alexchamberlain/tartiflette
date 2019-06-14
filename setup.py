@@ -31,7 +31,8 @@ def _build_libgraphqlparser():
 
     os.rename(
         artifact_path,
-        "tartiflette/parser/cffi/%s" % os.path.basename(artifact_path),
+        "tartiflette/language/parsers/libgraphqlparser/cffi/%s"
+        % os.path.basename(artifact_path),
     )
 
 

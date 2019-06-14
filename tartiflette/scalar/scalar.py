@@ -29,24 +29,34 @@ class Scalar:
     """
 
     def __init__(self, name: str, schema_name: str = "default") -> None:
-        self._name = name
+        """
+        TODO:
+        :param name: TODO:
+        :param schema_name: TODO:
+        :type name: TODO:
+        :type schema_name: TODO:
+        """
+        self.name = name
         self._implementation = None
         self._schema_name = schema_name
 
-    @property
-    def name(self) -> str:
-        return self._name
-
     def bake(self, schema: "GraphQLSchema") -> None:
+        """
+        TODO:
+        :param schema: TODO:
+        :type schema: TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         if not self._implementation:
             raise MissingImplementation(
-                "No implementation given for scalar < %s >" % self._name
+                "No implementation given for scalar < %s >" % self.name
             )
 
-        scalar = schema.find_scalar(self._name)
+        scalar = schema.find_scalar(self.name)
         if not scalar:
             raise UnknownScalarDefinition(
-                "Unknow Scalar Definition %s" % self._name
+                "Unknow Scalar Definition %s" % self.name
             )
 
         scalar.coerce_output = self._implementation.coerce_output
@@ -54,6 +64,13 @@ class Scalar:
         scalar.parse_literal = self._implementation.parse_literal
 
     def __call__(self, implementation):
+        """
+        TODO:
+        :param implementation: TODO:
+        :type implementation: TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         if isclass(implementation):
             self._implementation = implementation()
         else:

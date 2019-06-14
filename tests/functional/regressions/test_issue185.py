@@ -5,7 +5,7 @@ import pytest
 from tartiflette import Resolver, create_engine
 from tartiflette.constants import UNDEFINED_VALUE
 from tartiflette.language.ast import StringValueNode
-from tartiflette.scalar.custom_scalar import Scalar
+from tartiflette.scalar.scalar import Scalar
 
 _SDL = """
 scalar CapitalizedString

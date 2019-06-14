@@ -5,7 +5,7 @@ from typing import Any, Callable, Dict, Optional
 import pytest
 
 from tartiflette import Directive, Resolver, create_engine
-from tartiflette.utils.arguments import UNDEFINED_VALUE
+from tartiflette.constants import UNDEFINED_VALUE
 
 logger = logging.getLogger(__name__)
 

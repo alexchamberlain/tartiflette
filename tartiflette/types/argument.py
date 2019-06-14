@@ -1,14 +1,13 @@
 from functools import partial
 from typing import Any, Dict, List, Optional, Union
 
+from tartiflette.coercers.arguments import argument_coercer
 from tartiflette.coercers.literal import get_literal_coercer
 from tartiflette.types.helpers import (
     get_directive_instances,
     wraps_with_directives,
 )
 from tartiflette.types.type import GraphQLType
-from tartiflette.utils.arguments import argument_coercer
-from tartiflette.utils.coercer import CoercerWay, get_coercer
 
 
 class GraphQLArgument:
@@ -37,9 +36,8 @@ class GraphQLArgument:
         self._type = {}
         self._schema = schema
         self._directives = directives
-        self.coercer = None
-        self.coercer_func = None
         self.literal_coercer = None
+        self.coercer = None
 
         # Introspection Attribute
         self.directives_definition = None
@@ -122,28 +120,9 @@ class GraphQLArgument:
             self._type["name"] = self.gql_type
             self._type["kind"] = self._schema.find_type(self.gql_type).kind
 
-        self.coercer = partial(
-            wraps_with_directives(
-                directives_definition=self.directives,
-                directive_hook="on_argument_execution",
-                func=partial(
-                    argument_coercer,
-                    input_coercer=get_coercer(
-                        self, schema=schema, way=CoercerWay.INPUT
-                    ),
-                ),
-            ),
-            self,
-        )
-
         self.literal_coercer = get_literal_coercer(self.graphql_type)
-
-        from tartiflette.coercers.argument import (
-            argument_coercer as new_argument_coercer,
-        )
-
-        self.coercer_func = partial(
-            new_argument_coercer,
+        self.coercer = partial(
+            argument_coercer,
             directives=wraps_with_directives(
                 directives_definition=self.directives_definition,
                 directive_hook="on_argument_execution",

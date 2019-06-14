@@ -3,11 +3,14 @@ import os
 from glob import glob
 from typing import List, Optional, Union
 
-from tartiflette.schema import GraphQLSchema
 from tartiflette.types.exceptions.tartiflette import ImproperlyConfigured
 
 
 class SchemaRegistry:
+    """
+    TODO:
+    """
+
     _schemas = {}
 
     @staticmethod
@@ -18,6 +21,17 @@ class SchemaRegistry:
             Union["Directive", "Resolver", "Scalar", "Subscription"]
         ],
     ) -> None:
+        """
+        TODO:
+        :param schema_name: TODO:
+        :param where: TODO:
+        :param obj: TODO:
+        :type schema_name: TODO:
+        :type where: TODO:
+        :type obj: TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         if not obj:
             return
 
@@ -37,18 +51,45 @@ class SchemaRegistry:
     def register_directive(
         schema_name: str = "default", directive: Optional["Directive"] = None
     ) -> None:
+        """
+        TODO:
+        :param schema_name: TODO:
+        :param directive: TODO:
+        :type schema_name: TODO:
+        :type directive: TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         SchemaRegistry._register(schema_name, "directives", directive)
 
     @staticmethod
     def register_resolver(
         schema_name: str = "default", resolver: Optional["Resolver"] = None
     ) -> None:
+        """
+        TODO:
+        :param schema_name: TODO:
+        :param resolver: TODO:
+        :type schema_name: TODO:
+        :type resolver: TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         SchemaRegistry._register(schema_name, "resolvers", resolver)
 
     @staticmethod
     def register_scalar(
         schema_name: str = "default", scalar: Optional["Scalar"] = None
     ) -> None:
+        """
+        TODO:
+        :param schema_name: TODO:
+        :param scalar: TODO:
+        :type schema_name: TODO:
+        :type scalar: TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         SchemaRegistry._register(schema_name, "scalars", scalar)
 
     @staticmethod
@@ -56,14 +97,34 @@ class SchemaRegistry:
         schema_name: str = "default",
         subscription: Optional["Subscription"] = None,
     ) -> None:
+        """
+        TODO:
+        :param schema_name: TODO:
+        :param subscription: TODO:
+        :type schema_name: TODO:
+        :type subscription: TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         SchemaRegistry._register(schema_name, "subscriptions", subscription)
 
     @staticmethod
     def register_sdl(
         schema_name: str,
-        sdl: Union[str, List[str], GraphQLSchema],
+        sdl: Union[str, List[str], "GraphQLSchema"],
         modules_sdl: str = None,
     ) -> None:
+        """
+        TODO:
+        :param schema_name: TODO:
+        :param sdl: TODO:
+        :param modules_sdl: TODO:
+        :type schema_name: TODO:
+        :type sdl: TODO:
+        :type modules_sdl: TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         SchemaRegistry._schemas.setdefault(schema_name, {})
 
         sdl_files_list = []
@@ -92,8 +153,22 @@ class SchemaRegistry:
 
     @staticmethod
     def find_schema_info(schema_name: str = "default") -> dict:
+        """
+        TODO:
+        :param schema_name: TODO:
+        :type schema_name: TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         return SchemaRegistry._schemas[schema_name]
 
     @staticmethod
-    def find_schema(schema_name: str = "default") -> GraphQLSchema:
+    def find_schema(schema_name: str = "default") -> "GraphQLSchema":
+        """
+        TODO:
+        :param schema_name: TODO:
+        :type schema_name: TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         return SchemaRegistry.find_schema_info(schema_name)["inst"]

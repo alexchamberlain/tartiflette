@@ -25,6 +25,7 @@ class GraphQLEnumValue:
         self.description = description
         self._directives = directives
         self._schema = None
+        self.directives_definition = None
         self._directives_implementations = None
         self._introspection_directives = None
 
@@ -59,7 +60,7 @@ class GraphQLEnumValue:
 
     def bake(self, schema: "GraphQLSchema") -> None:
         self._schema = schema
-        self.directives_definition = get_directive_instances(  # pylint: disable=attribute-defined-outside-init
+        self.directives_definition = get_directive_instances(
             self._directives, self._schema
         )
         self._directives_implementations = {
@@ -111,6 +112,7 @@ class GraphQLEnumType(GraphQLType):
             CoercerWay.OUTPUT: self._output_directives_executor,
             CoercerWay.INPUT: self._input_directives_executor,
         }
+        self.directives_definition = None
         self._directives_implementations = {}
         self._value_map = {}
 
@@ -161,7 +163,7 @@ class GraphQLEnumType(GraphQLType):
 
     def bake(self, schema: "GraphQLSchema") -> None:
         super().bake(schema)
-        self.directives_definition = get_directive_instances(  # pylint: disable=attribute-defined-outside-init
+        self.directives_definition = get_directive_instances(
             self._directives, self._schema
         )
         self._directives_implementations = {

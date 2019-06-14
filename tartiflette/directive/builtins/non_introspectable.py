@@ -14,7 +14,7 @@ class NonIntrospectable:
         next_directive: Callable,
         introspected_element: Any,
         ctx: Optional[Dict[str, Any]],
-        info: "Info",
+        info: "ResolveInfo",
     ) -> None:
         """
         TODO:
@@ -31,7 +31,7 @@ class NonIntrospectable:
         :return: TODO:
         :rtype: TODO:
         """
-        # pylint: disable=no-self-use,unused-argument
+        # pylint: disable=unused-argument
         return None
 
 
@@ -42,7 +42,7 @@ class NonIntrospectableDeprecated:
         next_directive: Callable,
         introspected_element: Any,
         ctx: Optional[Dict[str, Any]],
-        info: "Info",
+        info: "ResolveInfo",
     ) -> None:
         """
         TODO:
@@ -59,7 +59,7 @@ class NonIntrospectableDeprecated:
         :return: TODO:
         :rtype: TODO:
         """
-        # pylint: disable=no-self-use,unused-argument
+        # pylint: disable=unused-argument
         print(
             "@non_introspectable is deprecated, please use @nonIntrospectable, will be removed in 0.12.0"
         )

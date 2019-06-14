@@ -32,6 +32,7 @@ class GraphQLInputObjectType(GraphQLType):
             self._fields.values()
         )
         self._directives = directives
+        self.directives_definition = None
         self._directives_implementations = {}
 
     def __repr__(self) -> str:
@@ -58,7 +59,7 @@ class GraphQLInputObjectType(GraphQLType):
 
     def bake(self, schema: "GraphQLSchema") -> None:
         super().bake(schema)
-        self.directives_definition = get_directive_instances(  # pylint: disable=attribute-defined-outside-init
+        self.directives_definition = get_directive_instances(
             self._directives, self._schema
         )
         self._directives_implementations = {

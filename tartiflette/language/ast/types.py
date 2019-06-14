@@ -12,7 +12,9 @@ class ListTypeNode(TypeNode):
 
     def __init__(
         self,
-        type: Union["NamedTypeNode", "NonNullTypeNode"],
+        type: Union[  # pylint: disable=redefined-builtin
+            "NamedTypeNode", "NonNullTypeNode"
+        ],
         location: Optional["Location"] = None,
     ) -> None:
         """
@@ -21,7 +23,6 @@ class ListTypeNode(TypeNode):
         :type type: Union[NamedTypeNode, NonNullTypeNode]
         :type location: Optional[Location]
         """
-        # pylint: disable=redefined-builtin
         self.type = type
         self.location = location
 
@@ -67,7 +68,9 @@ class NonNullTypeNode(TypeNode):
 
     def __init__(
         self,
-        type: Union["NamedTypeNode", "ListTypeNode"],
+        type: Union[  # pylint: disable=redefined-builtin
+            "NamedTypeNode", "ListTypeNode"
+        ],
         location: Optional["Location"] = None,
     ) -> None:
         """
@@ -76,7 +79,6 @@ class NonNullTypeNode(TypeNode):
         :type type: Union[NamedTypeNode, ListTypeNode]
         :type location: Optional[Location]
         """
-        # pylint: disable=redefined-builtin
         self.type = type
         self.location = location
 

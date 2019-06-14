@@ -1,1 +1,1 @@
-from .custom_scalar import Scalar
+from .scalar import Scalar

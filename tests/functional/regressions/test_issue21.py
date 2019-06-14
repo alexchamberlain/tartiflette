@@ -3,7 +3,6 @@ from collections import namedtuple
 import pytest
 
 from tartiflette import Resolver
-from tartiflette.executors.types import Info
 
 GQLTypeMock = namedtuple("GQLTypeMock", ["name", "coerce_value"])
 
@@ -70,7 +69,7 @@ async def test_issue21_okayquery(
     from tartiflette import create_engine
 
     @Resolver("Query.a")
-    async def a_resolver(_, arguments, __, info: Info):
+    async def a_resolver(_, arguments, __, info: "ResolveInfo"):
         return {"iam": info.field_name, "args": arguments}
 
     ttftt = await create_engine(
@@ -181,7 +180,7 @@ async def test_issue21_exceptquery(query, expected, varis, clean_registry):
     from tartiflette import create_engine
 
     @Resolver("Query.a")
-    async def a_resolver(_, arguments, __, info: Info):
+    async def a_resolver(_, arguments, __, info: "ResolveInfo"):
         return {"iam": info.field_name, "args": arguments}
 
     ttftt = await create_engine(

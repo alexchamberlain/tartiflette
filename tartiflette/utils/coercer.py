@@ -60,7 +60,7 @@ async def _not_null_coercer(
     val: Optional[Any],
     field_definition: "GraphQLField",
     ctx: Dict[Any, Any],
-    info: "Info",
+    info: "ResolveInfo",
 ) -> Any:
     if val is None:
         raise NullError(val, info)
@@ -94,7 +94,7 @@ async def _enum_coercer(
     val: Optional[str],
     field_definion: "GraphQLField",
     ctx: Dict[Any, Any],
-    info: "Info",
+    info: "ResolveInfo",
 ) -> Optional[str]:
     if val is None:
         return val
@@ -150,7 +150,7 @@ async def _input_object_coercer(
     values: Dict[Any, Any],
     field_definition: "GraphQLField",
     ctx: Dict[Any, Any],
-    info: "Info",
+    info: "ResolveInfo",
 ):
     if values is None:
         return None

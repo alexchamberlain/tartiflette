@@ -11,7 +11,7 @@ from tartiflette.types.helpers.definition import (
 from tartiflette.utils.errors import graphql_error_from_nodes
 
 
-async def variable_definition_coercer(
+async def variable_coercer(
     executable_variable_definition: "ExecutableVariableDefinition",
     raw_variable_values: Dict[str, Any],
     input_coercer: Callable,
@@ -91,7 +91,7 @@ async def variable_definition_coercer(
     return UNDEFINED_VALUE
 
 
-async def coerce_variable_definitions(
+async def coerce_variables(
     executable_variable_definitions: List["ExecutableVariableDefinition"],
     raw_variable_values: Dict[str, Any],
 ) -> Tuple[Dict[str, Any], List["GraphQLError"]]:

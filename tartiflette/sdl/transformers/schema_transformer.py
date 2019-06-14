@@ -20,10 +20,6 @@ from tartiflette.types.object import GraphQLObjectType
 from tartiflette.types.scalar import GraphQLScalarType
 from tartiflette.types.union import GraphQLUnionType
 
-# pylint: disable=no-self-use
-# pylint: disable=too-many-public-methods
-
-
 SchemaNode = namedtuple("SchemaNode", ["type", "value"])
 """
 SchemaNode is used as a container that mimics the lark.Token type.
@@ -41,6 +37,8 @@ class SchemaTransformer(Transformer_InPlace):
     grammar rule name.
     """
 
+    # pylint: disable=too-many-public-methods
+
     # TODO: Add directives
     # TODO: Add type extensions
     # TODO: Cleanup errors & custom type (format, line number etc.).
@@ -50,13 +48,16 @@ class SchemaTransformer(Transformer_InPlace):
         self._schema = schema
 
     def document(self, tree: Tree) -> List[Tree]:
+        # pylint: disable=no-self-use
         return tree.children
 
     def schema_definition(self, tree: Tree) -> Tree:
+        # pylint: disable=no-self-use
         # TODO: Save schema directives if there are some.
         return tree
 
     def type_system_definition(self, tree: Tree) -> Tree:
+        # pylint: disable=no-self-use
         # Nothing to do here
         return tree.children[0]
 
@@ -87,6 +88,7 @@ class SchemaTransformer(Transformer_InPlace):
         return self._operation_type_definition(tree, "subscription")
 
     def named_type(self, tree: Tree) -> SchemaNode:
+        # pylint: disable=no-self-use
         return SchemaNode("named_type", tree.children[0].value)
 
     def list_type(self, tree: Tree) -> SchemaNode:
@@ -104,6 +106,7 @@ class SchemaTransformer(Transformer_InPlace):
         )
 
     def type(self, tree: Tree) -> SchemaNode:
+        # pylint: disable=no-self-use
         return SchemaNode("type", tree.children[0].value)
 
     def type_definition(self, tree: Tree) -> Tree:
@@ -169,6 +172,7 @@ class SchemaTransformer(Transformer_InPlace):
         )
 
     def union_member_types(self, tree: Tree) -> SchemaNode:
+        # pylint: disable=no-self-use
         return SchemaNode(
             "union_members", [child.value for child in tree.children]
         )
@@ -207,9 +211,11 @@ class SchemaTransformer(Transformer_InPlace):
         return enum_type
 
     def enum_values_definition(self, tree: Tree) -> SchemaNode:
+        # pylint: disable=no-self-use
         return SchemaNode("enum_values", [child for child in tree.children])
 
     def enum_value_definition(self, tree: Tree) -> GraphQLEnumValue:
+        # pylint: disable=no-self-use
         description = None
         directives = None
         value = None
@@ -295,6 +301,7 @@ class SchemaTransformer(Transformer_InPlace):
         )
 
     def implements_interfaces(self, tree: Tree) -> SchemaNode:
+        # pylint: disable=no-self-use
         return SchemaNode(
             "interfaces",
             [
@@ -337,11 +344,13 @@ class SchemaTransformer(Transformer_InPlace):
         )
 
     def input_fields_definition(self, tree: Tree) -> SchemaNode:
+        # pylint: disable=no-self-use
         return SchemaNode(
             "input_fields", {child.name: child for child in tree.children}
         )
 
     def fields_definition(self, tree: Tree) -> SchemaNode:
+        # pylint: disable=no-self-use
         return SchemaNode(
             "fields", {child.name: child for child in tree.children}
         )
@@ -381,11 +390,13 @@ class SchemaTransformer(Transformer_InPlace):
         )
 
     def arguments_definition(self, tree: Tree) -> SchemaNode:
+        # pylint: disable=no-self-use
         return SchemaNode(
             "arguments", {child.name: child for child in tree.children}
         )
 
     def input_value_definition(self, tree: Tree) -> GraphQLArgument:
+        # pylint: disable=no-self-use
         description = None
         name = None
         gql_type = None
@@ -452,6 +463,7 @@ class SchemaTransformer(Transformer_InPlace):
         return Tree("directive_definition", [directive])
 
     def directive_locations(self, tree: Tree) -> SchemaNode:
+        # pylint: disable=no-self-use
         locations = []
         for child in tree.children:
             if child.value in GraphQLDirective.POSSIBLE_LOCATIONS:
@@ -463,43 +475,55 @@ class SchemaTransformer(Transformer_InPlace):
         return SchemaNode("directive_locations", locations)
 
     def description(self, tree: Tree) -> SchemaNode:
+        # pylint: disable=no-self-use
         return SchemaNode("description", tree.children[0].value)
 
     def default_value(self, tree: Tree) -> Tree:
+        # pylint: disable=no-self-use
         # Ignore this node and return the value contained
         return tree.children[0]
 
     def enum_value(self, tree: Tree) -> SchemaNode:
+        # pylint: disable=no-self-use
         return SchemaNode("enum_value", tree.children[0].value)
 
     def int_value(self, tree: Tree) -> SchemaNode:
+        # pylint: disable=no-self-use
         return SchemaNode("int_value", tree.children[0].value)
 
     def float_value(self, tree: Tree) -> SchemaNode:
+        # pylint: disable=no-self-use
         return SchemaNode("float_value", tree.children[0].value)
 
     def string_value(self, tree: Tree) -> SchemaNode:
+        # pylint: disable=no-self-use
         return SchemaNode("string_value", tree.children[0].value)
 
     def true_value(self, tree: Tree) -> SchemaNode:
+        # pylint: disable=no-self-use
         return SchemaNode("true_value", tree.children[0].value)
 
     def false_value(self, tree: Tree) -> SchemaNode:
+        # pylint: disable=no-self-use
         return SchemaNode("false_value", tree.children[0].value)
 
     def null_value(self, tree: Tree) -> SchemaNode:
+        # pylint: disable=no-self-use
         return SchemaNode("null_value", tree.children[0].value)
 
     def value(self, tree: Tree) -> SchemaNode:
+        # pylint: disable=no-self-use
         return SchemaNode("value", tree.children[0].value)
 
     def list_value(self, tree: Tree) -> SchemaNode:
+        # pylint: disable=no-self-use
         return SchemaNode(
             "list_value",
             [child.value for child in tree.children if child.type == "value"],
         )
 
     def object_value(self, tree: Tree) -> SchemaNode:
+        # pylint: disable=no-self-use
         obj = {}
         for child in tree.children:
             if child.type == "object_field":
@@ -515,6 +539,7 @@ class SchemaTransformer(Transformer_InPlace):
         return SchemaNode("object_value", obj)
 
     def object_field(self, tree: Tree) -> SchemaNode:
+        # pylint: disable=no-self-use
         name = None
         value = None
         for child in tree.children:
@@ -531,6 +556,7 @@ class SchemaTransformer(Transformer_InPlace):
         return SchemaNode("object_field", (name, value))
 
     def arguments(self, tree: Tree) -> SchemaNode:
+        # pylint: disable=no-self-use
         return SchemaNode(
             "arguments",
             {
@@ -540,6 +566,7 @@ class SchemaTransformer(Transformer_InPlace):
         )
 
     def argument(self, tree: Tree) -> SchemaNode:
+        # pylint: disable=no-self-use
         name = None
         value = None
         for child in tree.children:
@@ -556,6 +583,7 @@ class SchemaTransformer(Transformer_InPlace):
         return SchemaNode("argument", (name, value))
 
     def directives(self, tree: Tree) -> SchemaNode:
+        # pylint: disable=no-self-use
         return SchemaNode(
             "directives",
             [
@@ -569,6 +597,7 @@ class SchemaTransformer(Transformer_InPlace):
         )
 
     def directive(self, tree: Tree) -> SchemaNode:
+        # pylint: disable=no-self-use
         name = None
         arguments = None
         for child in tree.children:

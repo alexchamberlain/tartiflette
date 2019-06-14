@@ -1,21 +1,12 @@
 import asyncio
 
 from functools import partial
-from typing import (
-    Any,
-    AsyncIterable,
-    Callable,
-    Dict,
-    List,
-    Optional,
-    Set,
-    Union,
-)
+from typing import Any, Callable, Dict, List, Optional, Set, Union
 
-from tartiflette.coercers.argument import coerce_arguments
+from tartiflette.coercers.arguments import coerce_arguments
 from tartiflette.coercers.common import Path
 from tartiflette.constants import UNDEFINED_VALUE
-from tartiflette.execution.collect import collect_executables
+from tartiflette.execution.types import build_resolve_info
 from tartiflette.language.ast import (
     FieldNode,
     FragmentSpreadNode,
@@ -38,75 +29,6 @@ from tartiflette.utils.coercer_way import CoercerWay
 from tartiflette.utils.errors import graphql_error_from_nodes, located_error
 from tartiflette.utils.type_from_ast import schema_type_from_ast
 from tartiflette.utils.values import is_invalid_value
-
-# pylint: disable=too-many-lines
-
-
-class ResolveInfo:
-    """
-    TODO:
-    """
-
-    __slots__ = (
-        "field_name",
-        "field_nodes",
-        "return_type",
-        "parent_type",
-        "path",
-        "schema",
-        "fragments",
-        "root_value",
-        "operation",
-        "variable_values",
-    )
-
-    def __init__(
-        self,
-        field_name,
-        field_nodes,
-        return_type,
-        parent_type,
-        path,
-        schema,
-        fragments,
-        root_value,
-        operation,
-        variable_values,
-    ):
-        """
-        TODO:
-        :param field_name: TODO:
-        :param field_nodes: TODO:
-        :param return_type: TODO:
-        :param parent_type: TODO:
-        :param path: TODO:
-        :param schema: TODO:
-        :param fragments: TODO:
-        :param root_value: TODO:
-        :param operation: TODO:
-        :param variable_values: TODO:
-        :type field_name: TODO:
-        :type field_nodes: TODO:
-        :type return_type: TODO:
-        :type parent_type: TODO:
-        :type path: TODO:
-        :type schema: TODO:
-        :type fragments: TODO:
-        :type root_value: TODO:
-        :type operation: TODO:
-        :type variable_values: TODO:
-        """
-        # pylint: disable=too-many-arguments,too-many-locals
-        self.field_name = field_name
-        self.field_nodes = field_nodes
-        self.return_type = return_type
-        self.parent_type = parent_type
-        self.path = path
-        self.schema = schema
-        self.fragments = fragments
-        self.root_value = root_value
-        self.operation = operation
-        self.variable_values = variable_values
 
 
 async def should_include_node(
@@ -164,7 +86,7 @@ async def should_include_node(
         await wraps_with_directives(computed_directives, hook_name)(node)
     except SkipCollection:
         return False
-    except Exception as e:  # pylint: disable=broad-except,unused-variable
+    except Exception as e:  # pylint: disable=broad-except
         # TODO: we should add the error to the context here
         return False
     return True
@@ -500,49 +422,13 @@ def get_field_definition(
     #     return TypeNameMetaFieldDef
 
 
-def build_resolve_info(
-    execution_context: "ExecutionContext",
-    field_definition: "GraphQLField",
-    field_nodes: List["FieldNode"],
-    parent_type: "GraphQLObjectType",
-    path: "ResponsePath",
-) -> "GraphQLResolveInfo":
-    """
-    TODO:
-    :param execution_context: TODO:
-    :param field_definition: TODO:
-    :param field_nodes: TODO:
-    :param parent_type: TODO:
-    :param path: TODO:
-    :type execution_context: TODO:
-    :type field_definition: TODO:
-    :type field_nodes: TODO:
-    :type parent_type: TODO:
-    :type path: TODO:
-    :return: TODO:
-    :rtype: TODO:
-    """
-    return ResolveInfo(
-        field_definition.name,
-        field_nodes,
-        field_definition.graphql_type,  # TODO: is it the correct attribute?
-        parent_type,
-        path,
-        execution_context.schema,
-        execution_context.fragments,
-        execution_context.root_value,
-        execution_context.operation,
-        execution_context.variable_values,
-    )
-
-
 async def resolve_field_value_or_error(
     execution_context: "ExecutionContext",
     field_definition: "GraphQLField",
     field_nodes: List["FieldNode"],
     resolver: Callable,
     source: Any,
-    info: "GraphQLResolveInfo",
+    info: "ResolveInfo",
 ) -> Union[Exception, Any]:
     """
     Isolates the "ReturnOrAbrupt" behavior to not de-opt the `resolveField`
@@ -592,7 +478,7 @@ async def resolve_field_value_or_error(
                             ),
                         )
                     )
-                except Exception as e:  # pylint: disable=broad-except,unused-variable
+                except Exception as e:  # pylint: disable=broad-except
                     # TODO: we should add the error to the context here
                     pass
 
@@ -632,7 +518,7 @@ async def complete_list_value(
     execution_context: "ExecutionContext",
     return_type: "GraphQLOuputType",
     field_nodes: List["FieldNode"],
-    info: "GraphQLResolveInfo",
+    info: "ResolveInfo",
     path: "ResponsePath",
     result: Any,
 ) -> Any:
@@ -701,7 +587,7 @@ def ensure_valid_runtime_type(
     execution_context: "ExecutionContext",
     return_type: "GraphQLAbstractType",
     field_nodes: List["FieldNodes"],
-    info: "GraphQLResolveInfo",
+    info: "ResolveInfo",
     result: Any,
 ) -> "GraphQLObjectType":
     """
@@ -752,7 +638,7 @@ async def complete_abstract_value(
     execution_context: "ExecutionContext",
     return_type: "GraphQLOuputType",
     field_nodes: List["FieldNode"],
-    info: "GraphQLResolveInfo",
+    info: "ResolveInfo",
     path: "ResponsePath",
     result: Any,
 ):
@@ -867,7 +753,7 @@ async def complete_object_value(
     execution_context: "ExecutionContext",
     return_type: "GraphQLOuputType",
     field_nodes: List["FieldNode"],
-    info: "GraphQLResolveInfo",
+    info: "ResolveInfo",
     path: "ResponsePath",
     result: Any,
 ):
@@ -899,7 +785,7 @@ async def complete_value(
     execution_context: "ExecutionContext",
     return_type: "GraphQLOutputType",
     field_nodes: List["FieldNode"],
-    info: "GraphQLResolveInfo",
+    info: "ResolveInfo",
     path: "ResponsePath",
     result: Any,
 ) -> Any:
@@ -1024,7 +910,7 @@ async def complete_value_catching_error(
     execution_context: "ExecutionContext",
     return_type: "GraphQLOutputType",
     field_nodes: List["FieldNode"],
-    info: "GraphQLResolveInfo",
+    info: "ResolveInfo",
     path: "ResponsePath",
     result: Any,
 ) -> Any:
@@ -1112,139 +998,3 @@ async def resolve_field(
         path,
         result,
     )
-
-
-###########
-# OLD NEW #
-###########
-def _get_executable_fields_data(
-    operation_executable_fields: List["ExecutableFieldNode"]
-) -> Optional[Dict[str, Any]]:
-    data = {}
-    for field in operation_executable_fields:
-        if field.cant_be_null and field.marshalled is None:
-            return None
-        if not field.is_execution_stopped:
-            data[field.alias] = field.marshalled
-
-    return data or None
-
-
-async def _execute_fields_serially(
-    fields: List["ExecutableFieldNode"],
-    execution_context: "ExecutionContext",
-    initial_value: Optional[Any],
-) -> None:
-    for field in fields:
-        await field(
-            execution_context,
-            execution_context.context,
-            parent_result=initial_value,
-        )
-
-
-async def _execute_fields(
-    fields: List["ExecutableFieldNode"],
-    execution_context: "ExecutionContext",
-    initial_value: Optional[Any],
-) -> None:
-    await asyncio.gather(
-        *[
-            field(
-                execution_context,
-                execution_context.context,
-                parent_result=initial_value,
-            )
-            for field in fields
-        ],
-        return_exceptions=False,
-    )
-
-
-async def execute_operation(
-    execution_context: "ExecutionContext"
-) -> Dict[str, Any]:
-    operation_type = execution_context.schema.find_type(
-        execution_context.schema.get_operation_type(
-            execution_context.operation.operation_type.capitalize()
-        )
-    )
-
-    operation_executable_map_fields = await collect_executables(
-        execution_context,
-        operation_type,
-        execution_context.operation.selection_set,
-    )
-
-    if execution_context.errors:
-        return execution_context.build_response(
-            errors=execution_context.errors
-        )
-
-    if not operation_executable_map_fields:
-        return execution_context.build_response()
-
-    operation_executable_fields = list(
-        operation_executable_map_fields[operation_type.name].values()
-    )
-
-    if execution_context.operation.operation_type == "mutation":
-        await _execute_fields_serially(
-            operation_executable_fields,
-            execution_context,
-            execution_context.root_value,
-        )
-    else:
-        await _execute_fields(
-            operation_executable_fields,
-            execution_context,
-            execution_context.root_value,
-        )
-
-    return execution_context.build_response(
-        data=_get_executable_fields_data(operation_executable_fields),
-        errors=execution_context.errors,
-    )
-
-
-async def run_subscription(
-    execution_context: "ExecutionContext"
-) -> AsyncIterable[Dict[str, Any]]:
-    operation_type = execution_context.schema.find_type(
-        execution_context.schema.get_operation_type(
-            execution_context.operation.operation_type.capitalize()
-        )
-    )
-
-    operation_executable_map_fields = await collect_executables(
-        execution_context,
-        operation_type,
-        execution_context.operation.selection_set,
-    )
-
-    if execution_context.errors:
-        yield execution_context.build_response(errors=execution_context.errors)
-        return
-
-    if not operation_executable_map_fields:
-        yield execution_context.build_response()
-        return
-
-    operation_executable_fields = list(
-        operation_executable_map_fields[operation_type.name].values()
-    )
-
-    source_event_stream = await operation_executable_fields[
-        0
-    ].create_source_event_stream(
-        execution_context, execution_context.root_value
-    )
-
-    async for message in source_event_stream:
-        await _execute_fields(
-            operation_executable_fields, execution_context, message
-        )
-        yield execution_context.build_response(
-            data=_get_executable_fields_data(operation_executable_fields),
-            errors=execution_context.errors,
-        )

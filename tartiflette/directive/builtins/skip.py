@@ -36,7 +36,6 @@ class Skip:
         :return: TODO:
         :rtype: TODO:
         """
-        # pylint: disable=no-self-use
         return _skip_collection(
             directive_args, await next_directive(selection)
         )
@@ -55,7 +54,6 @@ class Skip:
         :return: TODO:
         :rtype: TODO:
         """
-        # pylint: disable=no-self-use
         return _skip_collection(
             directive_args, await next_directive(selection)
         )
@@ -74,7 +72,6 @@ class Skip:
         :return: TODO:
         :rtype: TODO:
         """
-        # pylint: disable=no-self-use
         return _skip_collection(
             directive_args, await next_directive(selection)
         )

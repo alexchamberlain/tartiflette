@@ -8,7 +8,6 @@ from typing import Any, AsyncIterable, Callable, Dict, List, Optional, Union
 from tartiflette.execution.collect import parse_and_validate_query
 from tartiflette.execution.context import build_execution_context
 from tartiflette.execution.response import build_response
-from tartiflette.parser import TartifletteRequestParser
 from tartiflette.resolver.factory import (
     default_error_coercer,
     error_coercer_factory,
@@ -99,7 +98,6 @@ class Engine:
         Create an Engine instance.
         """
         self._modules = None
-        self._parser = TartifletteRequestParser()
         self._schema = None
         self._build_response = None
         self._custom_default_resolver = None

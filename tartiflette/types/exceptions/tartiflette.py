@@ -1,15 +1,12 @@
 from typing import Any, List, Optional
 
-from tartiflette.executors.types import Info
-from tartiflette.types.location import Location
-
 
 class TartifletteError(Exception):
     def __init__(
         self,
         message: str,
         path: Optional[list] = None,
-        locations: Optional[List[Location]] = None,
+        locations: Optional[List["Location"]] = None,
         user_message: str = None,
         more_info: str = "",
         extensions: Optional[dict] = None,
@@ -34,7 +31,7 @@ class TartifletteError(Exception):
         self,
         *_args,
         path: Optional[list] = None,
-        locations: Optional[List[Location]] = None,
+        locations: Optional[List["Location"]] = None,
         **_kwargs,
     ):
         computed_locations = []
@@ -73,7 +70,7 @@ class ImproperlyConfigured(GraphQLError):
 
 
 class InvalidValue(GraphQLError):
-    def __init__(self, value: Any, info: Info) -> None:
+    def __init__(self, value: Any, info: "Info") -> None:
         self.value = value
         self.info = info
         message = "Invalid value (value: {!r})".format(value)

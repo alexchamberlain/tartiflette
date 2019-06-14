@@ -14,7 +14,7 @@ class Deprecated:
         next_directive: Callable,
         introspected_element: Any,
         ctx: Optional[Dict[str, Any]],
-        info: "Info",
+        info: "ResolveInfo",
     ):
         """
         TODO:
@@ -31,7 +31,6 @@ class Deprecated:
         :return: TODO:
         :rtype: TODO:
         """
-        # pylint: disable=no-self-use
         introspected_element = await next_directive(
             introspected_element, ctx, info
         )

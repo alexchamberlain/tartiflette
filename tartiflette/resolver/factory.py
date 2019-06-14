@@ -4,9 +4,11 @@ from tartiflette.types.exceptions.tartiflette import SkipExecution
 from tartiflette.types.helpers import wraps_with_directives
 from tartiflette.utils.coercer import get_coercer
 
+# TODO: DELETE THIS
+
 
 async def _execute_introspection_directives(
-    elements: List, ctx: Dict[Any, Any], info: "Info"
+    elements: List, ctx: Dict[Any, Any], info: "ResolveInfo"
 ) -> list:
     results = []
     for element in elements:
@@ -63,12 +65,14 @@ class _ResolverExecutor:
         parent_result: Optional[Any],
         # args: Dict[str, Any],
         ctx: Optional[Dict[str, Any]],
-        info: "Info",
+        info: "ResolveInfo",
         execution_directives: Optional[List[Dict[str, Any]]],
         field_nodes: List["FieldNode"],
     ) -> (Any, Any):
         # pylint: disable=too-many-locals
-        from tartiflette.execution.values import get_argument_values
+        async def get_argument_values(*args, **kwargs):
+            # pylint: disable=unused-argument
+            pass
 
         try:
             computed_directives = []
@@ -98,7 +102,7 @@ class _ResolverExecutor:
                 func=self._directivated_func,
             )
 
-            from tartiflette.coercers.argument import (
+            from tartiflette.coercers.arguments import (
                 coerce_arguments as new_coerce_arguments,
             )
 
@@ -180,7 +184,7 @@ def default_subscription_resolver(func: Callable):
         parent_result: Optional[Any],
         args: Dict[str, Any],
         ctx: Optional[Dict[str, Any]],
-        info: "Info",
+        info: "ResolveInfo",
     ) -> Optional[Any]:
         return await func(
             {info.schema_field.name: parent_result}, args, ctx, info
@@ -193,7 +197,7 @@ async def default_resolver(
     parent_result: Optional[Any],
     _args: Dict[str, Any],
     _ctx: Optional[Dict[str, Any]],
-    info: "Info",
+    info: "ResolveInfo",
 ) -> Optional[Any]:
     try:
         return getattr(parent_result, info.schema_field.name)

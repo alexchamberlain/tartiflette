@@ -3,9 +3,7 @@ from typing import Any, Callable
 
 from tartiflette.coercers.input import get_input_coercer
 from tartiflette.coercers.literal import get_literal_coercer
-from tartiflette.coercers.variable_definition import (
-    variable_definition_coercer,
-)
+from tartiflette.coercers.variables import variable_coercer
 from tartiflette.constants import UNDEFINED_VALUE
 from tartiflette.utils.type_from_ast import schema_type_from_ast
 
@@ -70,7 +68,7 @@ def variable_definition_node_to_executable(
         default_value=variable_definition_node.default_value
         or UNDEFINED_VALUE,
         coercer=partial(
-            variable_definition_coercer,
+            variable_coercer,
             input_coercer=partial(
                 get_input_coercer(graphql_type), variable_definition_node
             ),

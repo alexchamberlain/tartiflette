@@ -6,6 +6,15 @@ from tartiflette.types.helpers.transform_directive import transform_directive
 def get_directive_instances(
     directives: Dict[str, Optional[dict]], schema: "GraphQLSchema"
 ) -> List[Dict[str, Any]]:
+    """
+    TODO:
+    :param directives: TODO:
+    :param schema: TODO:
+    :type directives: TODO:
+    :type schema: TODO:
+    :return: TODO:
+    :rtype: TODO:
+    """
     try:
         computed_directives = []
         for directive_definition in directives:

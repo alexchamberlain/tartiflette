@@ -31,6 +31,13 @@ _DEFAULT_SUBSCRIPTION_TYPE = "Subscription"
 
 
 def _format_schema_error_message(errors: List[str]) -> str:
+    """
+    TODO:
+    :param errors: TODO:
+    :type errors: TODO:
+    :return: TODO:
+    :rtype: TODO:
+    """
     result = "\n"
     for index, err in enumerate(errors):
         result = "{result}\n{index}: {err}".format(
@@ -61,6 +68,13 @@ class GraphQLSchema:
     def __init__(
         self, name: str = "default", description: Optional[str] = None
     ) -> None:
+        """
+        TODO:
+        :param name: TODO:
+        :param description: TODO:
+        :type name: TODO:
+        :type description: TODO:
+        """
         self.description = (
             description
             or """A GraphQL Schema contains the complete definition of the GraphQL structure: types, entrypoints (query, mutation, subscription)."""
@@ -80,6 +94,11 @@ class GraphQLSchema:
         self.name = name
 
     def __repr__(self) -> str:
+        """
+        TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         return (
             "GraphQLSchema(name: {}, query: {}, "
             "mutation: {}, "
@@ -94,6 +113,13 @@ class GraphQLSchema:
         )
 
     def __eq__(self, other: Any) -> bool:
+        """
+        TODO:
+        :param other: TODO:
+        :type other: TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         if not type(self) is type(other):
             return False
         if (
@@ -114,29 +140,72 @@ class GraphQLSchema:
 
     @property
     def query_type(self) -> Optional[str]:
+        """
+        TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         return self._query_type
 
     @query_type.setter
     def query_type(self, value: str) -> None:
+        """
+        TODO:
+        :param value: TODO:
+        :type value: TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         self._query_type = value
 
     @property
     def mutation_type(self) -> Optional[str]:
+        """
+        TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         return self._mutation_type
 
     @mutation_type.setter
     def mutation_type(self, value: str) -> None:
+        """
+        TODO:
+        :param value: TODO:
+        :type value: TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         self._mutation_type = value
 
     @property
     def subscription_type(self) -> Optional[str]:
+        """
+        TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         return self._subscription_type
 
     @subscription_type.setter
     def subscription_type(self, value: str) -> None:
+        """
+        TODO:
+        :param value: TODO:
+        :type value: TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         self._subscription_type = value
 
     def get_operation_type(self, operation_name: str) -> Optional[str]:
+        """
+        TODO:
+        :param operation_name: TODO:
+        :type operation_name: TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         if operation_name == _DEFAULT_QUERY_TYPE:
             return self.query_type
         if operation_name == _DEFAULT_MUTATION_TYPE:
@@ -150,6 +219,11 @@ class GraphQLSchema:
     def queryType(  # pylint: disable=invalid-name
         self
     ) -> Optional[GraphQLType]:
+        """
+        TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         try:
             return self._gql_types[self.query_type]
         except KeyError:
@@ -161,6 +235,11 @@ class GraphQLSchema:
     def subscriptionType(  # pylint: disable=invalid-name
         self
     ) -> Optional[GraphQLType]:
+        """
+        TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         try:
             return self._gql_types[self.subscription_type]
         except KeyError:
@@ -172,6 +251,11 @@ class GraphQLSchema:
     def mutationType(  # pylint: disable=invalid-name
         self
     ) -> Optional[GraphQLType]:
+        """
+        TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         try:
             return self._gql_types[self.mutation_type]
         except KeyError:
@@ -181,6 +265,11 @@ class GraphQLSchema:
     # Introspection Attribute
     @property
     def types(self) -> List[GraphQLType]:
+        """
+        TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         return [
             self._gql_types[x]
             for x in self._gql_types
@@ -188,34 +277,91 @@ class GraphQLSchema:
         ]
 
     def find_type(self, name: str) -> GraphQLType:
+        """
+        TODO:
+        :param name: TODO:
+        :type name: TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         return self._gql_types[name]
 
     def has_type(self, name: str) -> bool:
+        """
+        TODO:
+        :param name: TODO:
+        :type name: TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         return name in self._gql_types
 
     @property
     def gql_types(self) -> Dict[str, GraphQLType]:
+        """
+        TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         return self._gql_types
 
     # Introspection Attribute
     @property
     def directives(self) -> List[GraphQLDirective]:
+        """
+        TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         return list(self._directives.values())
 
     def find_directive(self, name: str) -> GraphQLDirective:
+        """
+        TODO:
+        :param name: TODO:
+        :type name: TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         return self._directives[name]
 
     @property
     def enums(self) -> Dict[str, GraphQLEnumType]:
+        """
+        TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         return self._enums
 
     def find_enum(self, name: str) -> GraphQLEnumType:
+        """
+        TODO:
+        :param name: TODO:
+        :type name: TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         return self._enums.get(name)
 
     def find_scalar(self, name: str) -> Optional[GraphQLScalarType]:
+        """
+        TODO:
+        :param name: TODO:
+        :type name: TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         return self._custom_scalars.get(name)
 
     def add_directive(self, value: GraphQLDirective) -> None:
+        """
+        TODO:
+        :param value: TODO:
+        :type value: TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         if self._directives.get(value.name):
             raise RedefinedImplementation(
                 "new GraphQL directive definition `{}` "
@@ -226,6 +372,13 @@ class GraphQLSchema:
         self._directives[value.name] = value
 
     def add_definition(self, value: GraphQLType) -> None:
+        """
+        TODO:
+        :param value: TODO:
+        :type value: TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         if self._gql_types.get(value.name):
             raise RedefinedImplementation(
                 "new GraphQL type definition `{}` "
@@ -238,6 +391,13 @@ class GraphQLSchema:
             self._input_types.append(value.name)
 
     def add_enum_definition(self, value: GraphQLEnumType) -> None:
+        """
+        TODO:
+        :param value: TODO:
+        :type value: TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         if self._enums.get(value.name):
             raise RedefinedImplementation(
                 "new GraphQL enum definition `{}` "
@@ -249,6 +409,13 @@ class GraphQLSchema:
         self._input_types.append(value.name)
 
     def add_custom_scalar_definition(self, value: GraphQLScalarType) -> None:
+        """
+        TODO:
+        :param value: TODO:
+        :type value: TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         if self._custom_scalars.get(value.name):
             raise RedefinedImplementation(
                 "new GraphQL scalar definition `{}` "
@@ -260,6 +427,13 @@ class GraphQLSchema:
         self._input_types.append(value.name)
 
     def get_field_by_name(self, name: str) -> GraphQLField:
+        """
+        TODO:
+        :param name: TODO:
+        :type name: TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         try:
             object_name, field_name = name.split(".")
         except ValueError:
@@ -279,24 +453,27 @@ class GraphQLSchema:
         """
         Bake the final schema (it should not change after this) used for
         execution.
-
-        :return: None
+        :param custom_default_resolver: TODO:
+        :type custom_default_resolver: TODO:
+        :return: TODO:
+        :rtype: TODO:
         """
         self.inject_introspection()
         try:
             self.bake_types(custom_default_resolver)  # Bake types
             self.call_onbuild_directives()  # Call on_build directive that can modify the schema
-        except Exception:  # Failure here should be collected at validation time. pylint: disable=broad-except
-            pass
+        except Exception:  # pylint: disable=broad-except
+            # Failure here should be collected at validation time.
             # TODO Change this when we'll have a better idea on what to do with the on_build kind of directive.
+            pass
 
         self.validate()  # Revalidate.
 
     def validate(self) -> bool:
         """
         Check that the given schema is valid.
-
-        :return: bool
+        :return: TODO:
+        :rtype: TODO:
         """
         # TODO: Optimization: most validation functions iterate over
         # the schema types: it could be done in one loop.
@@ -325,6 +502,11 @@ class GraphQLSchema:
         return True
 
     def _validate_schema_named_types(self) -> List[str]:
+        """
+        TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         errors = []
         for type_name, gql_type in self._gql_types.items():
             try:
@@ -340,6 +522,11 @@ class GraphQLSchema:
         return errors
 
     def _validate_object_follow_interfaces(self) -> List[str]:
+        """
+        TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         errors = []
         for gql_type in self._gql_types.values():
             try:
@@ -383,6 +570,11 @@ class GraphQLSchema:
         return errors
 
     def _validate_schema_root_types_exist(self) -> List[str]:
+        """
+        TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         # Check "query" which is the only mandatory root type
         errors = []
         if self.query_type not in self._gql_types:
@@ -402,6 +594,11 @@ class GraphQLSchema:
         return errors
 
     def _validate_non_empty_object(self) -> List[str]:
+        """
+        TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         errors = []
         for type_name, gql_type in self._gql_types.items():
             if isinstance(gql_type, GraphQLObjectType) and not gql_type.fields:
@@ -409,6 +606,11 @@ class GraphQLSchema:
         return errors
 
     def _validate_union_is_acceptable(self) -> List[str]:
+        """
+        TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         errors = []
         for type_name, gql_type in self._gql_types.items():
             if isinstance(gql_type, GraphQLUnionType):
@@ -423,6 +625,11 @@ class GraphQLSchema:
         return errors
 
     def _validate_all_scalars_have_implementations(self) -> List[str]:
+        """
+        TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         errors = []
         for type_name, gql_type in self._gql_types.items():
             if isinstance(gql_type, GraphQLScalarType):
@@ -437,6 +644,11 @@ class GraphQLSchema:
         return errors
 
     def _validate_enum_values_are_unique(self) -> List[str]:
+        """
+        TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         errors = []
         for type_name, gql_type in self._gql_types.items():
             if isinstance(gql_type, GraphQLEnumType):
@@ -452,6 +664,15 @@ class GraphQLSchema:
     def _validate_type_is_an_input_types(
         self, obj, message_prefix
     ) -> List[str]:
+        """
+        TODO:
+        :param obj: TODO:
+        :param message_prefix: TODO:
+        :type obj: TODO:
+        :type message_prefix: TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         errors = []
         rtype = reduce_type(obj.gql_type)
         if not rtype in self._input_types:
@@ -463,6 +684,11 @@ class GraphQLSchema:
         return errors
 
     def _validate_arguments_have_valid_type(self) -> List[str]:
+        """
+        TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         errors = []
         for gqltype in self._gql_types.values():
             try:
@@ -489,6 +715,11 @@ class GraphQLSchema:
         return errors
 
     def _validate_input_type_composed_of_input_type(self) -> List[str]:
+        """
+        TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         errors = []
         for typename in self._input_types:
             gqltype = self._gql_types[typename]
@@ -502,6 +733,11 @@ class GraphQLSchema:
         return errors
 
     def _validate_directive_implementation(self) -> List[str]:
+        """
+        TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         errors = []
         for directive in self._directives.values():
             for expected in _EXPECTED_DIRECTIVE_IMPLEM:
@@ -513,6 +749,11 @@ class GraphQLSchema:
         return errors
 
     def inject_introspection(self) -> None:
+        """
+        TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         if self.query_type not in self._gql_types:
             return
 
@@ -538,6 +779,13 @@ class GraphQLSchema:
     def bake_types(
         self, custom_default_resolver: Optional[Callable] = None
     ) -> None:
+        """
+        TODO:
+        :param custom_default_resolver: TODO:
+        :type custom_default_resolver: TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         for gql_type in self._custom_scalars.values():
             gql_type.bake(self)
 
@@ -556,6 +804,11 @@ class GraphQLSchema:
                 gql_type.bake_fields(custom_default_resolver)
 
     def call_onbuild_directives(self) -> None:
+        """
+        TODO:
+        :return: TODO:
+        :rtype: TODO:
+        """
         for name, directive in self._directives.items():
             try:
                 directive.implementation.on_build(self)

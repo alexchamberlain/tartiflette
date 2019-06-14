@@ -1,8 +1,6 @@
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
-from tartiflette.coercers.variable_definition import (
-    coerce_variable_definitions,
-)
+from tartiflette.coercers.variables import coerce_variables
 from tartiflette.execution.collect import (
     collect_executable_variable_definitions,
 )
@@ -35,7 +33,7 @@ class ExecutionContext:
         schema: "GraphQLSchema",
         build_response: Callable,
         fragments: Dict[str, "FragmentDefinitionNode"],
-        operation: "ExecutableOperationNode",
+        operation: "OperationDefinitionNode",
         context: Optional[Any],
         root_value: Optional[Any],
         variable_values: Optional[Dict[str, Any]],
@@ -59,7 +57,7 @@ class ExecutionContext:
         :type schema: GraphQLSchema
         :type build_response: Callable
         :type fragments: Dict[str, FragmentDefinitionNode]
-        :type operation: ExecutableOperationNode
+        :type operation: OperationDefinitionNode
         :type context: Optional[Any]
         :type root_value: Optional[Any]
         :type variable_values: Optional[Dict[str, Any]]
@@ -211,7 +209,7 @@ async def build_execution_context(
             schema, operation.variable_definitions or []
         )
 
-        variable_values, variable_errors = await coerce_variable_definitions(
+        variable_values, variable_errors = await coerce_variables(
             executable_variable_definitions, raw_variable_values or {}
         )
 
