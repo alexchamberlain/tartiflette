@@ -1,12 +1,12 @@
 from typing import Any, Callable, Dict, List, Optional, Union
 
-from tartiflette.resolver import ResolverExecutorFactory
-from tartiflette.types.helpers import (
-    get_directive_instances,
-    reduce_type,
-    wraps_with_directives,
+from tartiflette.resolver.factory import get_field_resolver
+from tartiflette.types.helpers.get_directive_instances import (
+    get_schema_directive_instances,
 )
+from tartiflette.types.helpers.reduce_type import reduce_type
 from tartiflette.types.type import GraphQLType
+from tartiflette.utils.directives import wraps_with_directives
 
 
 class GraphQLField:
@@ -36,10 +36,9 @@ class GraphQLField:
         self._schema = schema
         self.description = description or ""
 
-        self.resolver = ResolverExecutorFactory.get_resolver_executor(
-            resolver, self
-        )
+        self.resolver = None
         self.raw_resolver = resolver
+        self.type_resolver = None
         self.subscribe = None
         self.parent_type = None
 
@@ -149,7 +148,7 @@ class GraphQLField:
         self._schema = schema
         self._reduced_type_name = reduce_type(self.gql_type)
         self._reduced_type = self._schema.find_type(self._reduced_type_name)
-        self.directives_definition = get_directive_instances(
+        self.directives_definition = get_schema_directive_instances(
             self._directives, self._schema
         )
         self._introspection_directives = wraps_with_directives(
@@ -163,4 +162,4 @@ class GraphQLField:
         for arg in self.arguments.values():
             arg.bake(self._schema)
 
-        self.resolver.bake(custom_default_resolver)
+        self.resolver = get_field_resolver(self, custom_default_resolver)

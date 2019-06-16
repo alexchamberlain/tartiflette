@@ -2,7 +2,7 @@ from functools import partial
 from typing import Any, Callable, Dict, List, Optional, Union
 
 
-async def _default_argument_execution_directive(
+async def default_argument_execution_directive(
     argument_definition: "GraphQLArgument", value: Any, *args, **kwargs
 ) -> Any:
     """
@@ -19,7 +19,7 @@ async def _default_argument_execution_directive(
     return value
 
 
-async def _default_directive_callable(value: Any, *args, **kwargs) -> Any:
+async def default_directive_callable(value: Any, *args, **kwargs) -> Any:
     """
     Default callable to use to wrap with directives when the hook doesn't
     implements a specific callable.
@@ -33,7 +33,7 @@ async def _default_directive_callable(value: Any, *args, **kwargs) -> Any:
 
 
 _DEFAULT_HOOKS_CALLABLE = {
-    "on_argument_execution": _default_argument_execution_directive
+    "on_argument_execution": default_argument_execution_directive
 }
 
 
@@ -85,7 +85,7 @@ def wraps_with_directives(
     """
     if func is None:
         func = _DEFAULT_HOOKS_CALLABLE.get(
-            directive_hook, _default_directive_callable
+            directive_hook, default_directive_callable
         )
 
     for directive in reversed(directives_definition):

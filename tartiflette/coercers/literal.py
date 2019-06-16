@@ -9,7 +9,6 @@ from tartiflette.language.ast import (
     ObjectValueNode,
     VariableNode,
 )
-from tartiflette.types.helpers import wraps_with_directives
 from tartiflette.types.helpers.definition import (
     get_wrapped_type,
     is_enum_type,
@@ -20,6 +19,7 @@ from tartiflette.types.helpers.definition import (
     is_wrapping_type,
 )
 from tartiflette.utils.coercer_way import CoercerWay
+from tartiflette.utils.directives import wraps_with_directives
 from tartiflette.utils.values import is_invalid_value
 
 

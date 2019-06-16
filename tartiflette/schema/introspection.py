@@ -3,7 +3,7 @@ from typing import Any, Dict, Optional
 
 from tartiflette.types.argument import GraphQLArgument
 from tartiflette.types.field import GraphQLField
-from tartiflette.types.helpers import get_typename
+from tartiflette.types.helpers.get_typename import get_typename
 from tartiflette.types.non_null import GraphQLNonNull
 
 

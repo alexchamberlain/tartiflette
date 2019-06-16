@@ -5,11 +5,7 @@ from tartiflette.execution.collect import (
     collect_executable_variable_definitions,
 )
 from tartiflette.execution.execute import (
-    execute_operation_n as execute_operation,
-)
-from tartiflette.execution.resolvers import (
-    default_field_resolver as internal_default_field_resolver,
-    default_type_resolver as internal_default_type_resolver,
+    execute_operation as execute_operation,
 )
 from tartiflette.language.ast import (
     FragmentDefinitionNode,
@@ -37,8 +33,6 @@ class ExecutionContext:
         context: Optional[Any],
         root_value: Optional[Any],
         variable_values: Optional[Dict[str, Any]],
-        default_field_resolver: Optional[Callable] = None,
-        default_type_resolver: Optional[Callable] = None,
     ) -> None:
         """
         :param schema: the GraphQLSchema schema instance linked to the engine
@@ -52,8 +46,6 @@ class ExecutionContext:
         :param root_value: an initial value corresponding to the root type
         being executed
         :param variable_values: the variables used in the GraphQL request
-        :param default_field_resolver: TODO:
-        :param default_type_resolver: TODO:
         :type schema: GraphQLSchema
         :type build_response: Callable
         :type fragments: Dict[str, FragmentDefinitionNode]
@@ -61,8 +53,6 @@ class ExecutionContext:
         :type context: Optional[Any]
         :type root_value: Optional[Any]
         :type variable_values: Optional[Dict[str, Any]]
-        :type default_field_resolver: TODO:
-        :type default_type_resolver: TODO:
         """
         # pylint: disable=too-many-arguments,too-many-locals
         self.schema = schema
@@ -72,8 +62,6 @@ class ExecutionContext:
         self.context = context
         self.root_value = root_value
         self.variable_values = variable_values
-        self.default_field_resolver = default_field_resolver
-        self.default_type_resolver = default_type_resolver
         self.errors: List["GraphQLError"] = []
 
         # TODO: backward compatibility old execution style
@@ -142,8 +130,6 @@ async def build_execution_context(
     raw_variable_values: Optional[Dict[str, Any]],
     operation_name: str,
     build_response: Callable,
-    default_field_resolver: Optional[Callable] = None,
-    default_type_resolver: Optional[Callable] = None,
 ) -> Tuple[Optional["ExecutionContext"], Optional[List["GraphQLError"]]]:
     """
     Factory function to build and return an ExecutionContext instance.
@@ -157,8 +143,6 @@ async def build_execution_context(
     :param operation_name: the operation name to execute
     :param build_response: callable in charge of returning the formatted
     GraphQL response
-    :param default_field_resolver: TODO:
-    :param default_type_resolver: TODO:
     :type schema: GraphQLSchema
     :type document: DocumentNode
     :type root_value: Optional[Any]
@@ -166,8 +150,6 @@ async def build_execution_context(
     :type raw_variable_values: Optional[Dict[str, Any]]
     :type operation_name: str
     :type build_response: Callable
-    :type default_field_resolver: TODO:
-    :type default_type_resolver: TODO:
     :return: an ExecutionContext instance
     :rtype: Tuple[Optional[ExecutionContext], Optional[List[GraphQLError]]]
     """
@@ -228,10 +210,6 @@ async def build_execution_context(
             context=context,
             root_value=root_value,
             variable_values=variable_values,
-            default_field_resolver=default_field_resolver
-            or internal_default_field_resolver,
-            default_type_resolver=default_type_resolver
-            or internal_default_type_resolver,
         ),
         None,
     )

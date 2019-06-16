@@ -10,7 +10,7 @@ directive @testdire(
   ifs: [Boolean!]
   conditions: [Boolean!]!
   list: [Boolean]!
-) on FIELD_DEFINITION
+) on FIELD
 
 type Cat {
   name: String!

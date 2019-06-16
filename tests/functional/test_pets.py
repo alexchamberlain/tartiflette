@@ -55,12 +55,7 @@ async def resolve_friends(parent_result, args, ctx, info):
             }
             """,
             None,
-            {
-                "data": {
-                    "__typename": "MyQuery",
-                    "version": "v0.1.0",
-                }
-            },
+            {"data": {"__typename": "MyQuery", "version": "v0.1.0"}},
         ),
         (
             """
@@ -70,12 +65,7 @@ async def resolve_friends(parent_result, args, ctx, info):
             }
             """,
             None,
-            {
-                "data": {
-                    "__typename": "MyQuery",
-                    "serviceStatus": "UP",
-                }
-            },
+            {"data": {"__typename": "MyQuery", "serviceStatus": "UP"}},
         ),
         (
             """

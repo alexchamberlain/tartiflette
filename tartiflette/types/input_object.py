@@ -1,11 +1,11 @@
 from typing import Any, Dict, List, Optional, Union
 
-from tartiflette.types.helpers import (
-    get_directive_instances,
-    wraps_with_directives,
+from tartiflette.types.helpers.get_directive_instances import (
+    get_schema_directive_instances,
 )
 from tartiflette.types.type import GraphQLType
 from tartiflette.utils.coercer_way import CoercerWay
+from tartiflette.utils.directives import wraps_with_directives
 
 
 class GraphQLInputObjectType(GraphQLType):
@@ -59,7 +59,7 @@ class GraphQLInputObjectType(GraphQLType):
 
     def bake(self, schema: "GraphQLSchema") -> None:
         super().bake(schema)
-        self.directives_definition = get_directive_instances(
+        self.directives_definition = get_schema_directive_instances(
             self._directives, self._schema
         )
         self._directives_implementations = {

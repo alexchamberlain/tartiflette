@@ -1,12 +1,24 @@
 from functools import lru_cache
-from typing import List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Set, Tuple, Union
 
 from tartiflette.execution.nodes.variable_definition import (
     variable_definition_node_to_executable,
 )
+from tartiflette.language.ast import (
+    FieldNode,
+    FragmentSpreadNode,
+    InlineFragmentNode,
+)
 from tartiflette.language.parsers.libgraphqlparser import parse_to_document
 from tartiflette.types.exceptions import GraphQLError
+from tartiflette.types.exceptions.tartiflette import SkipCollection
+from tartiflette.types.helpers.definition import is_abstract_type
+from tartiflette.types.helpers.get_directive_instances import (
+    get_query_directive_instances,
+)
+from tartiflette.utils.directives import wraps_with_directives
 from tartiflette.utils.errors import to_graphql_error
+from tartiflette.utils.type_from_ast import schema_type_from_ast
 
 __all__ = (
     "parse_and_validate_query",
@@ -62,3 +74,202 @@ def collect_executable_variable_definitions(
         )
         for variable_definition_node in variable_definition_nodes
     ]
+
+
+async def should_include_node(
+    execution_context: "ExecutionContext",
+    node: Union["FragmentSpreadNode", "FieldNode", "InlineFragmentNode"],
+) -> bool:
+    """
+    Determines if a field should be included based on the @include and @skip
+    directives, where @skip has higher precedence than @include.
+    :param execution_context: TODO:
+    :param node: TODO:
+    :type execution_context: TODO:
+    :type node: TODO:
+    :return: TODO:
+    :rtype: TODO:
+    """
+    # TODO: refactor this a improve it
+    if not node.directives:
+        return True
+
+    hook_name = (
+        "on_field_collection"
+        if isinstance(node, FieldNode)
+        else (
+            "on_fragment_spread_collection"
+            if isinstance(node, FragmentSpreadNode)
+            else "on_inline_fragment_collection"
+        )
+    )
+
+    try:
+        await wraps_with_directives(
+            directives_definition=get_query_directive_instances(
+                execution_context, node.directives
+            ),
+            directive_hook=hook_name,
+        )(node)
+    except SkipCollection:
+        return False
+    except Exception as e:  # pylint: disable=broad-except
+        # TODO: we should add the error to the context here
+        return False
+    return True
+
+
+def get_field_entry_key(node: "FieldNode") -> str:
+    """
+    Implements the logic to compute the key of a given field's entry.
+    :param node: TODO:
+    :type node: TODO:
+    :return: TODO:
+    :rtype: TODO:
+    """
+    return node.alias.value if node.alias else node.name.value
+
+
+def does_fragment_condition_match(
+    execution_context: "ExecutionContext",
+    fragment_node: Union["FragmentDefinitionNode", "InlineFragmentNode"],
+    graphql_object_type: "GraphQLObjectType",
+) -> bool:
+    """
+    Determines if a fragment is applicable to the given type.
+    :param execution_context: TODO:
+    :param fragment_node: TODO:
+    :param graphql_object_type: TODO:
+    :type execution_context: TODO:
+    :type fragment_node: TODO:
+    :type graphql_object_type: TODO:
+    :return: TODO:
+    :rtype: TODO:
+    """
+    type_condition_node = fragment_node.type_condition
+    if not type_condition_node:
+        return True
+
+    conditional_type = schema_type_from_ast(
+        execution_context.schema, type_condition_node
+    )
+    if conditional_type is graphql_object_type:  # TODO: is or == ?
+        return True
+
+    return is_abstract_type(
+        conditional_type
+    ) and conditional_type.is_possible_type(graphql_object_type)
+
+
+async def collect_fields(
+    execution_context: "ExecutionContext",
+    runtime_type: "GraphQLObjectType",
+    selection_set: "SelectionSetNode",
+    fields: Optional[Dict[str, List["FieldNode"]]] = None,
+    visited_fragment_names: Optional[Set[str]] = None,
+) -> Dict[str, List["FieldNode"]]:
+    """
+    Given a selectionSet, adds all of the fields in that selection to
+    the passed in map of fields, and returns it at the end.
+
+    CollectFields requires the "runtime type" of an object. For a field which
+    returns an Interface or Union type, the "runtime type" will be the actual
+    Object type returned by that field.
+    :param execution_context: TODO:
+    :param runtime_type: TODO:
+    :param selection_set: TODO:
+    :param fields: TODO:
+    :param visited_fragment_names: TODO:
+    :type execution_context: TODO:
+    :type runtime_type: TODO:
+    :type selection_set: TODO:
+    :type fields: TODO:
+    :type visited_fragment_names: TODO:
+    :return: TODO:
+    :rtype: TODO:
+    """
+    if fields is None:
+        fields: Dict[str, "FieldNode"] = {}
+
+    if visited_fragment_names is None:
+        visited_fragment_names: Set[str] = set()
+
+    for selection in selection_set.selections:
+        if isinstance(selection, FieldNode):
+            if not await should_include_node(execution_context, selection):
+                continue
+            fields.setdefault(get_field_entry_key(selection), []).append(
+                selection
+            )
+        elif isinstance(selection, InlineFragmentNode):
+            if not await should_include_node(
+                execution_context, selection
+            ) or not does_fragment_condition_match(
+                execution_context, selection, runtime_type
+            ):
+                continue
+
+            await collect_fields(
+                execution_context,
+                runtime_type,
+                selection.selection_set,
+                fields,
+                visited_fragment_names,
+            )
+        elif isinstance(selection, FragmentSpreadNode):
+            fragment_name = selection.name.value
+            if (
+                fragment_name in visited_fragment_names
+                or not await should_include_node(execution_context, selection)
+            ):
+                continue
+
+            visited_fragment_names.add(fragment_name)
+
+            fragment_definition = execution_context.fragments[fragment_name]
+            if not fragment_definition or not does_fragment_condition_match(
+                execution_context, fragment_definition, runtime_type
+            ):
+                continue
+
+            await collect_fields(
+                execution_context,
+                runtime_type,
+                fragment_definition.selection_set,
+                fields,
+                visited_fragment_names,
+            )
+    return fields
+
+
+async def collect_subfields(
+    execution_context: "ExecutionContext",
+    return_type: "GraphQLOuputType",
+    field_nodes: List["FieldNode"],
+) -> Dict[str, List["FieldNode"]]:
+    """
+    A memoized collection of relevant subfields with regard to the return
+    type. Memoizing ensures the subfields are not repeatedly calculated, which
+    saves overhead when resolving lists of values.
+    :param execution_context: TODO:
+    :param return_type: TODO:
+    :param field_nodes: TODO:
+    :type execution_context: TODO:
+    :type return_type: TODO:
+    :type field_nodes: TODO:
+    :return: TODO:
+    :rtype: TODO:
+    """
+    subfield_nodes: Dict[str, List["FieldNode"]] = {}
+    visited_fragment_names: Set[str] = set()
+    for field_node in field_nodes:
+        selection_set = field_node.selection_set
+        if selection_set:
+            subfield_nodes = await collect_fields(
+                execution_context,
+                return_type,
+                selection_set,
+                subfield_nodes,
+                visited_fragment_names,
+            )
+    return subfield_nodes

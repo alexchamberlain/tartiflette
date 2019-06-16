@@ -34,12 +34,7 @@ async def ttftt_engine():
     ):
         chosen = arguments.get("choose", 0)
         if chosen == 1:
-            return {
-                "aField": "aValue",
-                "bField": 1,
-                "_typename": "One",
-                "__typename": "One",
-            }
+            return {"aField": "aValue", "bField": 1, "_typename": "One"}
         elif chosen == 2:
 
             class Lol:

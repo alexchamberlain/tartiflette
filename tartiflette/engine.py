@@ -8,13 +8,13 @@ from typing import Any, AsyncIterable, Callable, Dict, List, Optional, Union
 from tartiflette.execution.collect import parse_and_validate_query
 from tartiflette.execution.context import build_execution_context
 from tartiflette.execution.response import build_response
-from tartiflette.resolver.factory import (
-    default_error_coercer,
-    error_coercer_factory,
-)
 from tartiflette.schema.bakery import SchemaBakery
 from tartiflette.schema.registry import SchemaRegistry
 from tartiflette.types.exceptions.tartiflette import ImproperlyConfigured
+from tartiflette.utils.errors import (
+    default_error_coercer,
+    error_coercer_factory,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -100,7 +100,6 @@ class Engine:
         self._modules = None
         self._schema = None
         self._build_response = None
-        self._custom_default_resolver = None
 
         if (
             sdl
@@ -177,7 +176,6 @@ class Engine:
                 error_coercer or default_error_coercer
             ),
         )
-        self._custom_default_resolver = custom_default_resolver
 
     async def execute(
         self,
@@ -216,7 +214,6 @@ class Engine:
             variables,
             operation_name,
             self._build_response,
-            self._custom_default_resolver,
         )
 
         return (

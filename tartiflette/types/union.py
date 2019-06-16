@@ -1,10 +1,10 @@
 from typing import Any, Dict, List, Optional, Set
 
-from tartiflette.types.helpers import (
-    get_directive_instances,
-    wraps_with_directives,
+from tartiflette.types.helpers.get_directive_instances import (
+    get_schema_directive_instances,
 )
 from tartiflette.types.type import GraphQLType
+from tartiflette.utils.directives import wraps_with_directives
 
 
 class GraphQLUnionType(GraphQLType):
@@ -78,7 +78,7 @@ class GraphQLUnionType(GraphQLType):
             self._possible_types_set.add(gql_type_name)
 
         self._introspection_directives = wraps_with_directives(
-            directives_definition=get_directive_instances(
+            directives_definition=get_schema_directive_instances(
                 self._directives, self._schema
             ),
             directive_hook="on_introspection",

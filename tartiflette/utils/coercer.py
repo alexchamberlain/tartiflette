@@ -2,7 +2,8 @@ from functools import partial
 from typing import Any, Callable, Dict, List, Optional, Union
 
 from tartiflette.types.exceptions.tartiflette import InvalidValue, NullError
-from tartiflette.types.helpers import has_typename, reduce_type
+from tartiflette.types.helpers.has_typename import has_typename
+from tartiflette.types.helpers.reduce_type import reduce_type
 
 from .coercer_way import CoercerWay
 

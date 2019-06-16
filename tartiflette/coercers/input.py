@@ -4,7 +4,6 @@ from typing import Any, Callable, Dict, Optional
 from tartiflette.coercers.common import CoercionResult, Path, coercion_error
 from tartiflette.constants import UNDEFINED_VALUE
 from tartiflette.types.exceptions.tartiflette import MultipleException
-from tartiflette.types.helpers import wraps_with_directives
 from tartiflette.types.helpers.definition import (
     get_wrapped_type,
     is_enum_type,
@@ -15,6 +14,7 @@ from tartiflette.types.helpers.definition import (
     is_wrapping_type,
 )
 from tartiflette.utils.coercer_way import CoercerWay
+from tartiflette.utils.directives import wraps_with_directives
 from tartiflette.utils.errors import is_coercible_exception
 from tartiflette.utils.values import is_invalid_value
 

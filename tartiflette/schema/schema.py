@@ -16,7 +16,7 @@ from tartiflette.types.exceptions.tartiflette import (
     UnknownSchemaFieldResolver,
 )
 from tartiflette.types.field import GraphQLField
-from tartiflette.types.helpers import reduce_type
+from tartiflette.types.helpers.reduce_type import reduce_type
 from tartiflette.types.input_object import GraphQLInputObjectType
 from tartiflette.types.interface import GraphQLInterfaceType
 from tartiflette.types.non_null import GraphQLNonNull

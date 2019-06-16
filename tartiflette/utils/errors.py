@@ -1,5 +1,5 @@
 from functools import partial
-from typing import List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 
 from tartiflette.types.exceptions.tartiflette import (
     GraphQLError,
@@ -142,3 +142,18 @@ def located_error(
         computed_exceptions.append(graphql_error)
 
     return MultipleException(exceptions=computed_exceptions)
+
+
+def default_error_coercer(
+    exception: Exception, error: Dict[str, Any]
+) -> Dict[str, Any]:
+    # pylint: disable=unused-argument
+    return error
+
+
+def error_coercer_factory(error_coercer: Callable) -> Callable:
+    def func_wrapper(exception: Exception) -> dict:
+        error = exception.coerce_value()
+        return error_coercer(exception, error)
+
+    return func_wrapper

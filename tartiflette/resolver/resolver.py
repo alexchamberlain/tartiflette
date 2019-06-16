@@ -1,5 +1,5 @@
 from inspect import iscoroutinefunction
-from typing import Callable
+from typing import Callable, Optional
 
 from tartiflette.schema.registry import SchemaRegistry
 from tartiflette.types.exceptions.tartiflette import (
@@ -27,15 +27,22 @@ class Resolver:
             return 42
     """
 
-    def __init__(self, name: str, schema_name: str = "default") -> None:
+    def __init__(
+        self,
+        name: str,
+        schema_name: str = "default",
+        type_resolver: Optional[Callable] = None,
+    ) -> None:
         """
         TODO:
         :param name: TODO:
+        :param schema_name: TODO:
         :param schema_name: TODO:
         :type name: TODO:
         :type schema_name: TODO:
         """
         self.name = name
+        self._type_resolver = type_resolver
         self._implementation = None
         self._schema_name = schema_name
 
@@ -49,16 +56,18 @@ class Resolver:
         """
         if not self._implementation:
             raise MissingImplementation(
-                "No implementation given for resolver < %s >" % self.name
+                f"No implementation given for resolver < {self.name} >"
             )
 
         try:
             field = schema.get_field_by_name(self.name)
-            field.resolver.update_func(self._implementation)
             field.raw_resolver = self._implementation
+            # TODO: shouldn't we raise an exception if `type_resolver` is
+            # defined for something else than an abstract type field?
+            field.type_resolver = self._type_resolver
         except KeyError:
             raise UnknownFieldDefinition(
-                "Unknown Field Definition %s" % self.name
+                f"Unknown Field Definition {self.name}"
             )
 
     def __call__(self, resolver: Callable) -> Callable:
@@ -71,9 +80,15 @@ class Resolver:
         """
         if not iscoroutinefunction(resolver):
             raise NonAwaitableResolver(
-                "The resolver `{}` given is not awaitable.".format(
-                    repr(resolver)
-                )
+                f"The resolver `{repr(resolver)}` given is not awaitable."
+            )
+
+        if self._type_resolver and not iscoroutinefunction(
+            self._type_resolver
+        ):
+            raise NonAwaitableResolver(
+                f"The type resolver `{repr(resolver)}` given is not "
+                "awaitable."
             )
 
         SchemaRegistry.register_resolver(self._schema_name, self)

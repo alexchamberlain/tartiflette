@@ -104,7 +104,7 @@ def build_resolve_info(
     field_definition: "GraphQLField",
     field_nodes: List["FieldNode"],
     parent_type: "GraphQLObjectType",
-    path: "ResponsePath",
+    path: "Path",
 ) -> "ResolveInfo":
     """
     TODO:

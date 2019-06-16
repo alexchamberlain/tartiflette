@@ -1,12 +1,12 @@
 from typing import Any, Dict, List, Optional, Union
 
 from tartiflette.types.field import GraphQLField
-from tartiflette.types.helpers import (
-    get_directive_instances,
-    wraps_with_directives,
+from tartiflette.types.helpers.get_directive_instances import (
+    get_schema_directive_instances,
 )
 from tartiflette.types.type import GraphQLType
 from tartiflette.utils.coercer_way import CoercerWay
+from tartiflette.utils.directives import wraps_with_directives
 
 
 class GraphQLObjectType(GraphQLType):
@@ -84,7 +84,7 @@ class GraphQLObjectType(GraphQLType):
             self._interfaces.append(interface)
             interface.possibleTypes.append(self)
 
-        directives_definition = get_directive_instances(
+        directives_definition = get_schema_directive_instances(
             self._directives, self._schema
         )
 

@@ -3,11 +3,11 @@ from typing import Any, Dict, List, Optional, Union
 
 from tartiflette.coercers.arguments import argument_coercer
 from tartiflette.coercers.literal import get_literal_coercer
-from tartiflette.types.helpers import (
-    get_directive_instances,
-    wraps_with_directives,
+from tartiflette.types.helpers.get_directive_instances import (
+    get_schema_directive_instances,
 )
 from tartiflette.types.type import GraphQLType
+from tartiflette.utils.directives import wraps_with_directives
 
 
 class GraphQLArgument:
@@ -105,7 +105,7 @@ class GraphQLArgument:
 
     def bake(self, schema: "GraphQLSchema") -> None:
         self._schema = schema
-        self.directives_definition = get_directive_instances(
+        self.directives_definition = get_schema_directive_instances(
             self._directives, self._schema
         )
 
