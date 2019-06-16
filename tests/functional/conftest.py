@@ -24,6 +24,7 @@ _SCHEMAS = {
         _get_sdl_path("coercion.sdl"),
         {"modules": ["tests.functional.coercers.common"]},
     ),
+    "pets": os.path.join(_CURR_PATH, "reusable", "pets", "schema.graphql"),
 }
 
 _TTFTT_ENGINES = {}

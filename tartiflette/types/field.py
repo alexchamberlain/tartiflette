@@ -45,7 +45,7 @@ class GraphQLField:
 
         # Introspection Attribute
         self.isDeprecated = False  # pylint: disable=invalid-name
-        self._directives_implementations = None
+        self.directives_definition = None
         self._is_leaf = False
         self._reduced_type = None
         self._reduced_type_name = None
@@ -53,7 +53,7 @@ class GraphQLField:
 
     @property
     def directives(self) -> List[Dict[str, Any]]:
-        return self._directives_implementations
+        return self.directives_definition
 
     @property
     def introspection_directives(self):
@@ -149,11 +149,11 @@ class GraphQLField:
         self._schema = schema
         self._reduced_type_name = reduce_type(self.gql_type)
         self._reduced_type = self._schema.find_type(self._reduced_type_name)
-        self._directives_implementations = get_directive_instances(
+        self.directives_definition = get_directive_instances(
             self._directives, self._schema
         )
         self._introspection_directives = wraps_with_directives(
-            directives_definition=self._directives_implementations,
+            directives_definition=self.directives_definition,
             directive_hook="on_introspection",
         )
         self.parent_type = parent_type
